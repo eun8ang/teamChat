@@ -23,6 +23,13 @@ function clampIndex(value: number, length: number) {
   return Math.min(Math.max(value, 0), length);
 }
 
+function isSplitSurrogatePair(text: string, index: number) {
+  if (index <= 0 || index >= text.length) return false;
+  const before = text.charCodeAt(index - 1);
+  const after = text.charCodeAt(index);
+  return before >= 0xd800 && before <= 0xdbff && after >= 0xdc00 && after <= 0xdfff;
+}
+
 export function MessageComposer({ onSend, isSending }: MessageComposerProps) {
   const [draft, setDraft] = useState("");
   const [limitNotice, setLimitNotice] = useState("");
@@ -93,8 +100,10 @@ export function MessageComposer({ onSend, isSending }: MessageComposerProps) {
     const hasCaret = caret.current.focused;
     const rawStart = hasCaret ? caret.current.start : current.length;
     const rawEnd = hasCaret ? caret.current.end : current.length;
-    const start = clampIndex(Math.min(rawStart, rawEnd), current.length);
-    const end = clampIndex(Math.max(rawStart, rawEnd), current.length);
+    const from = clampIndex(Math.min(rawStart, rawEnd), current.length);
+    const to = clampIndex(Math.max(rawStart, rawEnd), current.length);
+    const start = isSplitSurrogatePair(current, from) ? from - 1 : from;
+    const end = from === to ? start : isSplitSurrogatePair(current, to) ? to + 1 : to;
     const next = current.slice(0, start) + emoji + current.slice(end);
     caretLocked.current = false;
     if (next.length > MAX_MESSAGE_LENGTH) {

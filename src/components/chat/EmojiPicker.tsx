@@ -20,6 +20,12 @@ const EMOJI_CHOICES = [
   { emoji: "❤️", name: "Red heart" },
   { emoji: "👋", name: "Waving hand" },
   { emoji: "⭐", name: "Star" },
+  { emoji: "😎", name: "Smiling face with sunglasses" },
+  { emoji: "🤔", name: "Thinking face" },
+  { emoji: "😮", name: "Surprised face" },
+  { emoji: "😢", name: "Crying face" },
+  { emoji: "🙌", name: "Raising hands" },
+  { emoji: "🙏", name: "Folded hands" },
 ] as const;
 
 export function EmojiPicker({ onSelect, disabled = false }: EmojiPickerProps) {
