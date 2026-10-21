@@ -89,7 +89,9 @@
 | `tests/`, `vitest.config.*` | 실제로 실행되는 기본 테스트와 설정 |
 | `README.md` | 설치·실행·검증 명령·URL·역할 안내 |
 | `CONTRIBUTING.md` | 이슈·브랜치·커밋·PR·리뷰 규칙 |
-| `AGENTS.md` | AI 작업 범위와 검증 규칙 |
+| `AGENTS.md`, `CLAUDE.md` | AI 작업 범위·검증 규칙과 필수 Git 스킬 안내 |
+| `.agents/skills/git-issue-pr/SKILL.md` | AI 커밋·PR 생성에 필수인 Conventional Commit·Issue 연결 규칙 |
+| `.github/workflows/close-linked-issues.yml` | 실제 develop 병합을 확인한 뒤 해결된 Issue 종료 |
 | `.github/ISSUE_TEMPLATE/work-item.md` | 이슈 템플릿 |
 | `.github/pull_request_template.md` | PR 템플릿 |
 | `.github/workflows/pr-checks.yml` | PR 전용 검사와 required check `workshop-ci`. 배포·배포 secrets 없음 |
@@ -403,14 +405,14 @@ Projects를 사용하면 `Backlog → In progress → In review → Integrated �
 
 ### 6.4 Issue 연결과 종료 규칙
 
-기본 브랜치가 `main`이면 **`develop` 대상 PR 본문의 `Closes #12`는 자동 종료 키워드로 처리되지 않는다.** 기능 PR에는 `Refs #12`를 적고 필요하면 Development 영역에서 수동 연결한다. [S3]
+GitHub 기본 종료 키워드는 기본 브랜치(`main`) 병합에 적용된다. [S3] 이 저장소는 [develop push 워크플로](.github/workflows/close-linked-issues.yml)로 실제 `develop` 병합을 확인하고 Issue를 completed 상태로 종료한다. 참가자가 사용하기 전에 해당 워크플로를 먼저 `develop`에 병합한다.
 
-- feature PR: `Refs #12` → develop 머지 → `status:integrated`.
-- 본 과정 공동 릴리스 PR: **base=main, compare=develop**으로 열고 포함한 이슈의 `Closes #12`, `Closes #18`을 각각 적는다. 확장 과정에서는 compare가 release 브랜치다.
-- main 머지: GitHub가 연결된 이슈를 닫을 수 있다.
+- feature/fix PR: base는 `develop`으로 두고, 완전히 해결한 실제 Issue마다 본문에 `Fixes #12`처럼 독립된 한 줄을 작성한다. develop push 워크플로가 실제 병합된 PR과 병합 SHA를 확인한 뒤 Issue를 종료한다.
+- 일부 작업·참고 연결: `Refs #12`를 사용하며 자동 종료하지 않는다. PR 생성·미병합 종료·feature 브랜치 push도 이 워크플로의 종료 대상이 아니다.
+- 본 과정 공동 릴리스 PR: **base=main, compare=develop**으로 열고 이미 통합된 이슈는 `Refs #12`, `Refs #18`로 기록한다. 확장 과정에서는 compare가 release 브랜치다.
 - Production 배포·웹 확인: `status:released` 또는 Released 상태로 변경한다.
 
-**자동 종료는 머지 시점이며 배포 성공을 보장하지 않는다.** 실패하면 배포 문제를 기록하고, 필요하면 원래 이슈를 다시 연다.
+**Issue 종료는 develop 통합을 뜻하며 Production 배포·웹 검증과는 별도다.** 배포가 실패하면 배포 문제와 후속 작업을 실제 상태대로 기록한다. 예시 번호를 실제 GitHub Issue 번호로 바꾸며 `CHAT-01` 같은 목록 ID를 번호로 쓰지 않는다.
 
 ## 7. Clone → AI 개발 → Commit → Push
 
@@ -454,6 +456,12 @@ git branch --show-current
 
 먼저 README.md, CONTRIBUTING.md, AGENTS.md, package.json,
 관련 컴포넌트와 기존 테스트를 읽어라.
+커밋 메시지나 PR 제목·본문·Draft를 생성하기 전에는 반드시
+.agents/skills/git-issue-pr/SKILL.md를 읽고 적용하라.
+Claude Code에서는 /git-issue-pr를 사용한다. 영문 Conventional Commit
+제목과 실제 Issue 번호를 쓰며 새 기능은 feat, 버그 수정은 fix를 쓴다.
+완전히 해결한 Issue는 base develop PR 본문에 독립된 Fixes #번호 줄로 연결하고,
+일부 작업·참고 연결은 Refs #번호를 사용하라.
 
 Issue:
 <이슈 URL과 본문>
@@ -511,7 +519,7 @@ PR 템플릿:
 
 ```markdown
 ## 관련 Issue
-Refs #12
+Fixes #12
 
 ## 변경 이유
 사용자가 메시지에 이모지를 넣을 수 있도록 한다.
@@ -724,7 +732,7 @@ git push -u origin release/0.1.0
 ```
 
 5. **base=main, compare=release/0.1.0**으로 PR을 만든다.
-6. PR 본문에 변경 요약, 포함 이슈, 확인한 Preview, 검증 결과를 적는다. 예:
+6. PR 본문에 변경 요약, 포함 이슈, 확인한 Preview, 검증 결과를 적는다. develop에서 이미 통합·종료한 이슈는 참고용 `Refs`로 연결한다. AI로 PR 문구를 생성할 때도 필수 Git 스킬을 적용한다. 예:
 
 ```markdown
 ## Release v0.1.0
@@ -732,10 +740,10 @@ git push -u origin release/0.1.0
 - 공백 메시지 전송 차단
 - 채팅 제목 개선
 
-Closes #12
-Closes #18
-Closes #21
-Closes #22
+Refs #12
+Refs #18
+Refs #21
+Refs #22
 
 ## 검증
 - 통합 Preview URL:

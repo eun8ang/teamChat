@@ -50,17 +50,19 @@ The connected Free plan allows 500,000 commands per month, with automatic paid u
 npm run present
 ```
 
-[Open the presentation](http://127.0.0.1:4173). Use the large term headings and Git flowchart to explain each step, then demonstrate the same actions in the terminal, editor, and GitHub.
+[Open the presentation](http://127.0.0.1:4173/?lang=en). Use the large term headings and Git flowchart to explain each step, then demonstrate the same actions in the terminal, editor, and GitHub.
 
-The workshop materials below are in Korean.
+Use the **한국어 / English** selector in the top toolbar to change language without leaving the current slide. Slides, controls, and the flowchart switch together. The URL keeps the selected language and slide, so refreshing or sharing it preserves both. Navigation: arrow keys / Space, `G` for the flowchart, `F` for fullscreen, Home / End.
 
-- [100-minute schedule and exercise commands](docs/workshop.md)
-- [Large Git flowchart](docs/git-flow.svg)
-- [Detailed workshop plan and optional extensions](git-github-workshop-plan.md)
+Participant instructions, templates, and the English conflict exercise are available in English. The detailed facilitator plan remains in Korean.
+
+- [100-minute schedule and exercise commands](docs/workshop.en.md)
+- [Large Git flowchart](docs/git-flow.en.svg)
+- [Detailed workshop plan and optional extensions (Korean)](git-github-workshop-plan.md)
 - [Branch, PR, and review rules](CONTRIBUTING.md)
 
 ```bash
-npm run workshop:conflict
+npm run workshop:conflict:en
 ```
 
 The conflict exercise creates a separate Git repository in your OS temporary directory. Change to the printed path and resolve a conflict between two branches that changed the same title.

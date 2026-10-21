@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title description">
+  <title id="title">Git collaboration: Clone, Branching, Checkout, PR, Review PR, Merge, conflict resolution and Production deployment</title>
+  <desc id="description">Clone and branch from the latest develop. Commit and push changes, then open a PR targeting develop. After CI and peer approval, merge and verify Preview. Review and merge one shared develop-to-main PR; main Actions deploys to Production. Resolve conflicts in your feature branch, preserving both intentions, then repeat checks and review.</desc>
+  <defs>
+    <marker id="blue-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#72b7ff"/></marker>
+    <marker id="mint-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#79e1bf"/></marker>
+    <marker id="purple-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#c6b0ff"/></marker>
+    <marker id="amber-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#ffd38a"/></marker>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
+      .title{fill:#f6f8ff;font-size:68px;font-weight:760;letter-spacing:-1.5px}
+      .subtitle{fill:#b5c3da;font-size:29px}
+      .term{fill:#f6f8ff;font-size:48px;font-weight:750;letter-spacing:-1px}
+      .detail{fill:#c2cfe4;font-size:25px}
+      .card{fill:#151f33;stroke:#334662;stroke-width:2}
+      .leader{fill:none;stroke:#5a6d8b;stroke-width:2}
+      .develop{fill:none;stroke:#72b7ff;stroke-width:8;stroke-linecap:round}
+      .feature{fill:none;stroke:#79e1bf;stroke-width:8;stroke-linecap:round}
+      .dnode{fill:#0b1120;stroke:#72b7ff;stroke-width:7}
+      .fnode{fill:#0b1120;stroke:#79e1bf;stroke-width:7}
+    </style>
+  </defs>
+  <rect width="1920" height="1080" fill="#0b1120"/>
+  <text x="80" y="98" class="title">Git → GitHub → Deploy</text>
+  <text x="84" y="153" class="subtitle">Chat together. Ship a small UI improvement together.</text>
+  <rect x="1460" y="53" width="380" height="72" rx="36" fill="#172d48"/>
+  <text x="1650" y="99" text-anchor="middle" font-size="30" font-weight="700" fill="#a8d0ff">100min · Production</text>
+
+  <path d="M140 375H1785" class="develop" marker-end="url(#blue-arrow)"/>
+  <path d="M510 375C615 375 610 650 710 650H1325C1430 650 1435 375 1550 375" class="feature" marker-end="url(#mint-arrow)"/>
+  <circle cx="190" cy="375" r="18" class="dnode"/>
+  <circle cx="510" cy="375" r="18" class="dnode"/>
+  <circle cx="1550" cy="375" r="21" class="dnode"/>
+  <circle cx="1770" cy="375" r="18" class="dnode"/>
+  <circle cx="710" cy="650" r="17" class="fnode"/>
+  <circle cx="960" cy="650" r="17" class="fnode"/>
+  <circle cx="1190" cy="650" r="17" class="fnode"/>
+  <circle cx="1330" cy="650" r="17" class="fnode"/>
+  <text x="80" y="451" fill="#94c9ff" font-size="42" font-weight="700">develop</text>
+  <text x="690" y="699" fill="#9aeacf" font-size="33" font-weight="650">feature/12-chat-title</text>
+  <text x="875" y="427" fill="#9db0cc" font-size="29">Verify in Preview</text>
+
+  <path d="M190 310V350M510 310V350M1550 310V348" class="leader"/>
+  <rect x="70" y="195" width="290" height="120" rx="18" class="card"/>
+  <text x="94" y="246" class="term">Clone</text>
+  <text x="94" y="288" class="detail">Remote → Local</text>
+  <rect x="400" y="195" width="410" height="120" rx="18" class="card"/>
+  <text x="425" y="246" class="term">Branching</text>
+  <text x="425" y="288" class="detail">Branch from develop</text>
+  <rect x="1390" y="195" width="380" height="120" rx="18" class="card"/>
+  <text x="1416" y="246" class="term">Merge</text>
+  <text x="1416" y="288" class="detail">Integrate reviewed work</text>
+
+  <path d="M710 676L675 718M960 596V625M1190 676V718M1330 676L1450 718" class="leader"/>
+  <rect x="500" y="720" width="330" height="120" rx="18" class="card"/>
+  <text x="524" y="771" class="term">Checkout</text>
+  <text x="524" y="813" class="detail">Switch to my branch</text>
+  <rect x="820" y="475" width="360" height="120" rx="18" class="card"/>
+  <text x="845" y="526" fill="#f6f8ff" font-size="40" font-weight="750">Commit &amp; Push</text>
+  <text x="845" y="568" class="detail">Check → Record → Share</text>
+  <rect x="1000" y="720" width="280" height="120" rx="18" class="card"/>
+  <text x="1025" y="771" class="term">PR</text>
+  <text x="1025" y="813" class="detail">base: develop</text>
+  <rect x="1290" y="720" width="310" height="120" rx="18" class="card"/>
+  <text x="1315" y="771" class="term">Review PR</text>
+  <text x="1315" y="813" class="detail">Peer approval · CI</text>
+
+  <path d="M1770 401V455" class="develop" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <rect x="1530" y="465" width="330" height="160" rx="18" fill="#211c38" stroke="#655385" stroke-width="2"/>
+  <text x="1555" y="516" fill="#e2d6ff" font-size="43" font-weight="750">Release PR</text>
+  <text x="1555" y="558" class="detail">develop → main</text>
+  <text x="1555" y="601" fill="#d1bfff" font-size="25">CI · Approval · Merge</text>
+  <path d="M1710 625V650M1640 650H1850M1820 650V709" fill="none" stroke="#c6b0ff" stroke-width="6" stroke-linecap="round" marker-end="url(#purple-arrow)"/>
+  <circle cx="1710" cy="650" r="17" fill="#0b1120" stroke="#c6b0ff" stroke-width="6"/>
+  <text x="1640" y="698" fill="#d1bfff" font-size="32" font-weight="700">main</text>
+  <rect x="1630" y="720" width="230" height="120" rx="18" fill="#211c38" stroke="#655385" stroke-width="2"/>
+  <text x="1650" y="770" fill="#e2d6ff" font-size="35" font-weight="750">Production</text>
+  <text x="1650" y="812" class="detail">main CI/CD</text>
+
+  <path d="M1210 850V884" fill="none" stroke="#ffd38a" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#amber-arrow)"/>
+  <text x="1234" y="880" fill="#ffd38a" font-size="26">If conflicts occur</text>
+  <rect x="80" y="900" width="1760" height="120" rx="20" fill="#322718" stroke="#87643a" stroke-width="2"/>
+  <text x="108" y="951" fill="#ffe0a9" font-size="45" font-weight="750">Resolve merge conflicts</text>
+  <text x="108" y="995" fill="#f7d9a7" font-size="29">My feature ← latest develop · Preserve both changes → add → commit → Recheck · Review</text>
+  <text x="1840" y="1060" text-anchor="end" fill="#8e9db5" font-size="23">Core: develop → main PR → Production · release / hotfix branches: optional extension</text>
+</svg>

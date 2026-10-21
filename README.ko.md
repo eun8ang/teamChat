@@ -52,10 +52,12 @@ npm run present
 
 [발표 화면 열기](http://127.0.0.1:4173). 큰 용어 제목과 Git 흐름도로 설명한 뒤 터미널·에디터·GitHub에서 같은 작업을 보여줍니다.
 
+상단 **한국어 / English** 선택 메뉴로 현재 슬라이드를 유지하면서 언어를 변경합니다. 슬라이드·버튼·흐름도가 함께 전환되며, URL에 언어와 슬라이드가 반영되어 새로고침하거나 링크를 공유해도 유지됩니다. 영어 참가자용 [진행표](docs/workshop.en.md)와 `npm run workshop:conflict:en`도 제공합니다.
+
 - [100분 진행표와 실습 명령](docs/workshop.md)
 - [큰 Git 흐름도](docs/git-flow.svg)
 - [상세 운영 계획과 확장 과정](git-github-workshop-plan.md)
-- [브랜치·PR·리뷰 규칙](CONTRIBUTING.md)
+- [브랜치·PR·리뷰 규칙](CONTRIBUTING.ko.md)
 
 ```bash
 npm run workshop:conflict

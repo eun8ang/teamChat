@@ -1,39 +1,50 @@
-## 관련 Issue
-Refs #이슈번호
+## Related issue
+Fixes #ISSUE_NUMBER
 
-<!-- feature/fix PR의 base는 develop입니다. 실제 이슈 번호를 사용하세요. -->
+<!-- Read and apply .agents/skills/git-issue-pr/SKILL.md before generating any commit or PR text,
+including drafts (Claude Code: /git-issue-pr). Use an English Conventional Commit PR title,
+e.g. feat: add emoji picker (#12), with the actual issue number.
+Feature/fix PRs target develop. Replace ISSUE_NUMBER above with an actual GitHub issue number.
+Keep one standalone Fixes #NUMBER line for each issue this PR fully resolves.
+For partial work or context, replace Fixes with Refs. Remove the placeholder line when there is no issue.
+Never use CHAT catalog IDs or made-up issue numbers.
+For the shared release PR, use base main / compare develop and follow the facilitator's instructions. -->
 
-## 변경 이유와 결과
-어떤 문제를 해결했고, 사용자가 이제 무엇을 할 수 있나요?
+## Problem and outcome
+What problem does this solve, and what can users do now?
 
-## 변경 내용
+## Changes
 -
 
-## 수용 기준과 확인 결과
-- [ ] Issue의 수용 기준을 직접 확인했다.
-- [ ] 기존 메시지 전송·표시 동작을 확인했다.
-- [ ] 변경과 관련된 경계 조건을 확인했다.
+## Acceptance criteria and verification
+- [ ] I verified the issue's acceptance criteria.
+- [ ] I verified existing message sending and display behavior.
+- [ ] I checked edge cases relevant to this change.
 
-## 실행 결과
+## Check results
+<!-- Record pass/fail or "Not run" with a reason. npm run check runs all four checks. -->
 - `npm run lint`:
 - `npm run typecheck`:
 - `npm run test:ci`:
 - `npm run build`:
-- 브라우저에서 확인한 순서와 결과:
+- Browser verification steps and results:
 
-## 화면 또는 재현 순서
-화면 변경이 있으면 캡처를, 동작 변경이면 입력·행동·결과를 적으세요.
+## Screenshots or reproduction steps
+For UI changes, include screenshots. For behavior changes, describe the input, actions, and result.
 
-## AI 사용과 사람의 확인
-- AI가 도운 부분:
-- 사람이 직접 확인한 부분:
-- 아직 확인하지 못한 부분:
+## AI assistance and human verification
+- AI-assisted work:
+- What I verified myself:
+- What remains unverified:
 
-## 리뷰 요청
-- 리뷰어: @동료 (오른쪽 Reviewers에서도 요청)
-- 중점적으로 확인할 파일·조건:
-- [ ] base가 `develop`, compare가 내 작업 브랜치인지 확인했다.
-- [ ] staged diff와 Files changed에 관련된 파일만 포함되어 있다.
+## Review request
+- Reviewer: @TEAMMATE (also request a review using the Reviewers sidebar)
+- Files or conditions that need particular attention:
+- [ ] I checked the base and compare branches (feature/fix: base `develop`; shared release: base `main`, compare `develop`).
+- [ ] The staged diff and Files changed contain only files relevant to this PR.
 
-<!-- develop 머지는 기본 브랜치 main의 Issue를 자동 종료하지 않습니다.
-기능 PR에는 Refs #번호를 쓰고, 릴리스의 종료 연결은 진행자 안내를 따르세요. -->
+<!-- The develop push workflow verifies the merged PR and closes fully resolved Fixes issues as completed.
+The workflow must already exist on develop. Refs does not request issue closure.
+Issue closure means integrated into develop; Production release and deployment are separate.
+Never include credentials or tokens in text, screenshots, or logs. A teammate must review;
+AI feedback does not replace human approval. -->

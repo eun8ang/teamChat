@@ -1,31 +1,36 @@
-# 함께 작업하기
+# Contributing
 
-이 저장소는 Team Chat 화면을 작은 Issue 단위로 개선하는 Git·GitHub 실습용 프로젝트입니다. 기능 작업은 최신 `develop`에서 시작하고 `develop`을 대상으로 PR을 만듭니다. `main`과 `develop`에는 직접 push하지 않습니다.
+**English** | [한국어](CONTRIBUTING.ko.md)
 
-참가자는 미리 배포된 공유 채팅방에서 함께 메시지를 보냅니다. 이름은 각자가 정한 표시 이름이며 계정 인증을 뜻하지 않습니다. UI 티켓은 관련 컴포넌트·스타일을 중심으로 수정하고, 공유 메시지 API 계약과 Production·Preview·로컬의 데이터 분리 설정을 보존합니다.
+Improve Team Chat through small issues and PRs. Start each feature/fix branch from the latest `develop` and target `develop` in your PR. Do not push directly to `main` or `develop`.
 
-## 준비
+Participants chat in a shared room. Display names are not authenticated accounts. Keep UI tasks focused on their components and styles. Preserve the shared message API, Redis storage, and separate Production, Preview, and local room prefixes. Never commit credentials or put Redis secrets in client code or `NEXT_PUBLIC_*` variables.
 
-진행자가 스타터를 원격에 게시한 뒤 다음 명령으로 준비하세요. 이미 clone했다면 해당 `teamChat` 폴더에서 `git status`부터 실행합니다. Node.js는 `.nvmrc`와 같은 **24.x**를 사용합니다. 로컬 공유 채팅용 환경 변수는 [README](README.md)의 안내에 따라 준비하고, 진행자가 제공한 개발 환경을 사용하세요.
+## Required Git skill and naming
+
+Before an AI generates any commit message, PR title/body, or draft PR, it must read and apply [git-issue-pr](.agents/skills/git-issue-pr/SKILL.md). Claude Code can invoke `/git-issue-pr`. This applies to suggested text as well as executed commands; it does not authorize publishing or merging.
+
+Write commit subjects and PR titles in English as `<type>(optional-scope): imperative description (#actual-issue-number)`. Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, and `revert`. Use `feat` for a feature and `fix` for a bug repair; resolving a GitHub issue does not make every change a `fix`. For example: `feat: add emoji picker (#12)`. Use actual issue numbers, not catalog IDs such as `CHAT-01`.
+
+## Set up
+
+Use Node.js **24.x** (`.nvmrc`). Follow [Getting started](README.md#getting-started) to clone, install with `npm ci`, and configure `.env.local` with the facilitator's development Redis settings and your own local prefix. Never use the Production prefix locally.
 
 ```bash
-git clone https://github.com/eun8ang/teamChat.git
-cd teamChat
 git status
-git config --local user.name "본인 이름"
-git config --local user.email "GitHub에 연결된 본인 이메일"
-npm ci
+git config --local user.name "Your Name"
+git config --local user.email "YOUR_GITHUB_EMAIL"
 npm run doctor
 npm run dev
 ```
 
-`git config --local`은 현재 저장소에만 적용합니다. GitHub 인증이 끝났는지는 `doctor`로 검증하지 않습니다. 브라우저에서 `http://127.0.0.1:3000`을 열어 메시지 전송을 확인하세요. 개발 서버는 별도 터미널에서 실행해 둡니다.
+The Git identity settings apply only to this repository. `doctor` does not verify GitHub authentication. Keep the development server running in a separate terminal and verify sending messages at [the local app](http://127.0.0.1:3000).
 
-## Issue → 작업 브랜치
+## Issue and branch
 
-GitHub **Issues → New issue → 실습 작업**에서 배경, 수정 범위, 확인 가능한 수용 기준과 재현 순서를 작성합니다. Assignees에 본인을 지정하고 짝과 수정 파일이 겹치는지 확인하세요. 라벨과 마일스톤은 진행자가 저장소에 준비한 경우에만 선택합니다.
+Choose **Issues → New issue → Workshop task**. Describe the problem, scope, acceptance criteria, and verification steps. Assign yourself and agree with your partner on file ownership. Use labels and milestones only if the facilitator has prepared them.
 
-아래는 **실제 Issue가 #12이고 채팅 제목 문구 변경을 맡았을 때**의 예시입니다. 자신의 번호와 작업에 맞게 브랜치 이름을 바꾸세요.
+Replace `12` and the branch description below with your actual issue and task. Finish or save any uncommitted work before switching branches.
 
 ```bash
 git status
@@ -35,27 +40,21 @@ git pull --ff-only origin develop
 git switch -c feature/12-chat-title
 ```
 
-로컬 `develop`이 없고 전환에 실패하면 `git switch --track origin/develop`으로 추적 브랜치를 만듭니다. 원격에도 `develop`이 없다면 진행자에게 준비 상태를 확인하세요. `git status`에 미완료 변경이 있으면 먼저 현재 작업을 정리합니다. `pull --ff-only`가 실패하면 원인을 확인하고 진행자와 해결합니다.
+If local `develop` does not exist, use `git switch --track origin/develop`. If remote `develop` is missing or `pull --ff-only` fails, inspect the cause with the facilitator. Do not force-push. Use `feature/*` for features/design changes and `fix/*` for bug fixes.
 
-- 기능·디자인 개선: `feature/12-chat-title`
-- 일반 버그 수정: `fix/13-blank-message`
-- PR의 base: `develop`
-- PR의 compare: 자신의 `feature/*` 또는 `fix/*` 브랜치
+## Implement, verify, and commit
 
-## 구현·확인·커밋
-
-Issue의 수용 기준에 맞는 최소 변경을 하고 관련 파일을 직접 읽으세요. AI가 만든 코드도 작성자가 동작과 변경 이유를 설명할 수 있어야 합니다.
+Make the smallest change that meets the issue's acceptance criteria. Read AI-generated code yourself and be able to explain its behavior and purpose.
 
 ```bash
-npm run lint
-npm run typecheck
-npm run test:ci
-npm run build
+npm run check
 git diff
 git status --short
 ```
 
-브라우저에서도 정상 흐름과 해당 변경의 경계 조건을 확인합니다. 제목 변경이라면 진행자와 정한 문구가 보이는지, 모바일에서 긴 제목이 레이아웃을 깨지 않는지, 기존 메시지 전송이 유지되는지 확인하세요. 실제 수정한 파일만 stage합니다. 아래 경로는 제목 문구를 변경했을 때의 예시입니다.
+This runs lint, type checking, tests, and the Production build. Also check the normal flow and relevant edge cases in the browser. For a title change, verify the agreed title, long text on mobile, and existing message sending. Record checks you did not run and why.
+
+Stage only relevant files. These paths are examples for a title change; include any related test files you changed.
 
 ```bash
 git add src/config/chat.ts
@@ -64,49 +63,46 @@ git commit -m "feat: label our team chat (#12)"
 git push -u origin feature/12-chat-title
 ```
 
-관련 테스트 파일을 수정했다면 그 파일도 함께 stage합니다. 환경 파일·토큰·불필요한 lockfile 변경이 섞이지 않았는지 staged diff에서 확인하세요.
+Check the staged diff for environment files, tokens, and unrelated lockfile changes.
 
-## PR·동료 리뷰·병합
+## PR, peer review, and merge
 
-1. GitHub에서 PR을 열고 **base `develop` / compare 내 작업 브랜치**를 확인합니다.
-2. 템플릿에 `Refs #12`, 변경 이유, 수용 기준, 실행 결과와 직접 확인한 내용을 씁니다. 기본 브랜치가 `main`인 이 실습에서는 `develop` PR의 `Closes #12`로 자동 종료를 기대하지 않습니다.
-3. Reviewers에 짝을 지정합니다. 검증 중에는 Draft로 두고 준비되면 Ready for review로 바꿉니다.
-4. 리뷰어는 Issue·diff·검사 결과를 보고 직접 동작을 확인합니다. 설명은 **Comment**, 병합 전에 필요한 수정은 **Request changes**로 남깁니다. 파일·재현 조건·기대 결과를 함께 적으세요.
-5. 작성자는 같은 브랜치에서 수정하고 같은 PR에 push합니다. 검사를 다시 확인하고 재리뷰를 요청합니다.
-6. 작성자 외 동료가 **Approve**를 제출합니다. AI의 의견을 확인하고 승인 판단은 사람이 합니다.
-7. 진행자가 정한 병합 담당자가 필수 검사 성공·동료 승인·충돌 없음·최신 base 반영을 확인하고 **Create a merge commit**으로 병합합니다.
-8. 진행자가 제공한 `develop` Preview에서 변경을 확인하고 Issue에 결과를 남깁니다. `status:integrated` 라벨이 준비되어 있다면 적용합니다. Issue 종료와 `main` 릴리스는 진행자 안내를 따릅니다.
+1. Open a PR with **base `develop` / compare your working branch**.
+2. Complete the template with a standalone `Fixes #12` line for each fully resolved issue, the reason for the change, acceptance criteria, check results, and your own verification. Use `Refs #12` for partial work or context; it does not request closure. Replace every example number with the actual GitHub issue number.
+3. Request your partner in **Reviewers**. Keep the PR in Draft until ready, then choose **Ready for review**.
+4. Review the issue, diff, CI, and actual behavior. Use **Comment** for questions and **Request changes** for required fixes. Include the file, reproduction steps, and expected result.
+5. The author commits fixes to the same branch and pushes to the same PR, checks CI again, and requests another review.
+6. Someone other than the author submits **Approve**. AI feedback does not replace human approval.
+7. The designated merger checks approval, passing required checks, the latest base, and absence of conflicts, then uses **Create a merge commit**.
+8. Verify the integration in the facilitator's `develop` Preview and record the result in the issue. The develop push workflow verifies the merged PR and closes its fully resolved `Fixes` issues as completed. Issue closure means integration into `develop`; follow the facilitator's separate release instructions for Production.
 
-Approve는 리뷰 결과이고 Merge는 코드를 합치는 동작입니다. **Resolve conversation**은 리뷰 대화를 닫는 기능입니다.
+The issue-closing workflow must first be merged into `develop` before participants rely on it. GitHub's native closing keywords apply to its default branch (`main`); this repository uses the develop push workflow for integration. Opening a PR, closing one without merging, pushing a feature branch, and `Refs` references do not close issues through this workflow.
 
-PR에 최신 `develop`을 반영해야 할 때는 내 작업 브랜치에서 실행합니다.
+Approve records a review; Merge integrates code. **Resolve conversation** closes a review discussion.
+
+To update your working branch with `develop`:
 
 ```bash
 git switch feature/12-chat-title
 git fetch origin
 git merge origin/develop
-# 충돌이 있으면 파일을 편집해 해결하고 git add <해결한 파일> 후 git commit
-npm run lint
-npm run typecheck
-npm run test:ci
-npm run build
+# If conflicts occur, edit the files, then git add <resolved-files> and git commit.
+npm run check
 git push
 ```
 
-기능 브랜치는 병합 뒤 재사용하지 않습니다. 다음 작업은 갱신한 `develop`에서 새로 만듭니다.
+Repeat peer review after resolving conflicts. Use `git merge --abort` to cancel an in-progress merge if needed. After merging a feature branch, start the next task on a new branch from updated `develop`.
 
-## 로컬 충돌 연습
+## Isolated conflict exercise
 
 ```bash
-npm run workshop:conflict
+npm run workshop:conflict:en
 ```
 
-이 명령은 운영체제의 임시 폴더에 별도의 저장소를 만들고, `feature/title-emoji`와 `feature/title-room`이 같은 `src/config/chat.ts` 한 줄을 바꿔 충돌한 상태를 준비합니다. 출력된 `cd` 명령을 따라 임시 폴더로 이동하세요. 현재 프로젝트의 브랜치와 작업 파일에는 손대지 않으며 원격으로 push하지 않습니다.
-
-충돌 표시를 지우고 두 요구가 남도록 다음 한 줄로 해결합니다.
+This creates a new repository in your OS temporary directory, with a conflict between `feature/title-emoji` and `feature/title-room` in `src/config/chat.ts`. It has no remote and does not change this project. Follow the printed `cd` command. Remove the conflict markers and preserve both intentions:
 
 ```ts
-export const CHAT_TITLE = "💬 Team Chat · 실습방";
+export const CHAT_TITLE = "💬 Team Chat · Workshop room";
 ```
 
 ```bash
@@ -116,4 +112,4 @@ git status
 git log --oneline --graph --all --decorate
 ```
 
-`git status`가 깨끗하고 병합 커밋에 두 제목 변경이 보이면 완료입니다. 연습 폴더를 나온 뒤 원래 프로젝트에서 실습을 이어가세요. `npm run workshop:conflict`를 다시 실행하면 새 임시 저장소가 생깁니다.
+You are done when the working tree is clean and the merged title preserves both changes. Return to the original project directory afterward. Each run creates a new temporary repository. The Korean exercise remains available with `npm run workshop:conflict`.

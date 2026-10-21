@@ -9,7 +9,7 @@
 
 ## 교육 전 준비
 
-진행자는 `main`·`develop`, 참가자 Write 권한, **기능 PR과 공동 릴리스 PR 모두 작성자 외 1명 승인**, required check `workshop-ci`, merge commit 허용을 확인한다. **교육 전에 공유 채팅 backend·저장·Vercel 배포를 완성**하고 Production 입장 URL을 준비한다. 두 브라우저가 서로 다른 이름으로 같은 방에 들어가 메시지를 주고받고, 새로고침과 UI 재배포 뒤에도 기록이 남는지 검증한다. 서버 구축·DB 설정은 100분 수업에 추가하지 않는다.
+진행자는 `main`·`develop`, 참가자 Write 권한, **기능 PR과 공동 릴리스 PR 모두 작성자 외 1명 승인**, required check `workshop-ci`, merge commit 허용을 확인한다. 참가자가 자동 종료를 사용하기 전에 [Issue 종료 워크플로](../.github/workflows/close-linked-issues.yml)를 `develop`에 먼저 병합한다. **교육 전에 공유 채팅 backend·저장·Vercel 배포를 완성**하고 Production 입장 URL을 준비한다. 두 브라우저가 서로 다른 이름으로 같은 방에 들어가 메시지를 주고받고, 새로고침과 UI 재배포 뒤에도 기록이 남는지 검증한다. 서버 구축·DB 설정은 100분 수업에 추가하지 않는다.
 
 Production 관객방은 같은 backend와 안정된 데이터 prefix를 계속 사용한다. develop Preview·로컬 실습은 별도 prefix로 분리한다. 같은 backend를 쓰더라도 실습 메시지가 Production에 섞이지 않아야 한다. Preview 접근권한을 주고 기능 PR·develop→main PR 검사와 main Production 배포 시간을 측정한다. develop에는 최신 main 이력이 반영되어 있어야 한다. 실제 서버 변수명·연결 방법은 README를 따른다. 로컬 파일만으로 공유 채팅·원격 설정·배포가 완료된 것으로 보지 않는다.
 
@@ -76,6 +76,8 @@ git branch --show-current
 
 ## 3. AI와 구현 → Commit & Push
 
+AI로 커밋 메시지나 PR 제목·본문·Draft를 생성하기 전에 반드시 [git-issue-pr](../.agents/skills/git-issue-pr/SKILL.md)을 읽고 적용한다. Claude Code는 `/git-issue-pr`로 호출한다. 영문 Conventional Commit 제목과 실제 Issue 번호를 사용하며, 새 기능은 `feat`, 버그 수정은 `fix`를 쓴다.
+
 AI에 Issue 본문과 다음 범위를 준다.
 
 ```text
@@ -108,7 +110,7 @@ Commit은 로컬 기록이고 Push는 원격 반영이다. 검증 실패는 같�
 ## 4. PR → Review PR → Merge
 
 1. GitHub에서 **base=`develop`**, compare=`feature/12-chat-title`로 PR을 만든다.
-2. 본문에 `Refs #12`, 변경 이유, 수용 기준별 결과, 실제 실행한 검사·화면 확인을 쓴다. 기본 브랜치가 main이므로 develop PR에서는 자동 Issue 종료를 기대하지 않는다.
+2. 완전히 해결한 실제 Issue마다 본문에 `Fixes #12`를 독립된 한 줄로 쓰고 변경 이유·수용 기준별 결과·실제 실행한 검사·화면 확인을 기록한다. 일부 작업이나 참고 연결은 `Refs #12`를 사용한다. develop push 워크플로가 실제 병합된 PR을 확인해 해결한 Issue를 completed로 종료한다. 이 종료는 develop 통합을 뜻하며 Production 배포와는 별도다.
 3. 짝을 Reviewer로 지정한다. 리뷰어는 Issue·Files changed·CI를 읽고 필요한 동작을 로컬에서 확인한다.
 4. AI에는 Issue·diff·CI 결과를 함께 주고 근거 있는 결함·경계 조건을 찾게 한다. 최종 리뷰 판단은 사람이 한다.
 5. 질문은 **Comment**, 머지 전 수정이 필요한 결함은 **Request changes**, 검토 완료는 **Approve**로 제출한다. 작성자는 자기 PR을 승인하지 않는다.

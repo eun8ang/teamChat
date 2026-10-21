@@ -6,10 +6,16 @@ const root = new URL("../docs/", import.meta.url);
 const routes = new Map([
   ["/", ["presenter.html", "text/html; charset=utf-8"]],
   ["/presenter.html", ["presenter.html", "text/html; charset=utf-8"]],
+  ["/git-flow.en.svg", ["git-flow.en.svg", "image/svg+xml"]],
   ["/git-flow.svg", ["git-flow.svg", "image/svg+xml"]],
 ]);
 const server = createServer(async (request, response) => {
-  const route = routes.get(new URL(request.url ?? "/", "http://localhost").pathname);
+  const url = new URL(request.url ?? "/", "http://localhost");
+  if (url.pathname === "/presenter.en.html") {
+    response.writeHead(302, { Location: "/?lang=en" }).end();
+    return;
+  }
+  const route = routes.get(url.pathname);
   if (!route) {
     response.writeHead(404).end("Not found");
     return;
@@ -27,6 +33,7 @@ server.on("error", (error) => {
   process.exitCode = 1;
 });
 server.listen(4173, "127.0.0.1", () => {
-  console.log("발표 화면: http://127.0.0.1:4173");
-  console.log("종료: Ctrl+C");
+  console.log("Presentation / 발표 화면: http://127.0.0.1:4173");
+  console.log("Language / 언어: 한국어 ↔ English (top toolbar)");
+  console.log("Stop / 종료: Ctrl+C");
 });

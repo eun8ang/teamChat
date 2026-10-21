@@ -1,32 +1,34 @@
 ---
-name: "실습 작업"
-about: "작은 기능·버그 수정·디자인 개선을 정의합니다."
-title: "✨ [기능] "
+name: "Workshop task"
+about: "Define a small feature, bug fix, or design improvement."
+title: "✨ [Feature] "
 labels: ""
 assignees: ""
 ---
 
-## 배경
-누가 어떤 상황에서 불편을 겪나요? 왜 이 변경이 필요한가요?
+## Background
+Who experiences the problem, and when? Why is this change needed?
 
-## 변경 범위
-수정할 화면·동작과 예상 파일을 적으세요. 한 번의 PR로 끝낼 수 있는 크기로 정합니다.
+## Scope
+Describe the screens, behavior, and files you expect to change. Keep the task small enough for one PR.
 
-## 수용 기준
-- [ ] 사용자가 확인할 수 있는 결과 1
-- [ ] 기존 동작이 유지되는 조건 1
-- [ ] 빈 입력·긴 입력·키보드 등 관련 경계 조건 1
+## Acceptance criteria
+- [ ] One observable outcome for the user
+- [ ] One condition that preserves existing behavior
+- [ ] One relevant edge case, such as empty input, long input, or keyboard use
 
-## 확인 방법
-1. 시작 화면 또는 입력값:
-2. 수행할 행동:
-3. 기대 결과:
+## Verification steps
+1. Starting screen or input:
+2. Actions to perform:
+3. Expected result:
 
-## 작업 배정
-- 담당자: @본인 (오른쪽 Assignees에도 지정)
-- 리뷰어: @동료 (PR을 만들 때 실제 review request도 전송)
-- 예상 수정 파일:
-- 라벨: 저장소에 준비된 라벨이 있으면 선택 (예: `type:feature`, `difficulty:easy`, `workshop`)
-- 마일스톤: 진행자가 준비한 경우에만 지정
+## Assignment
+- Assignee: @YOUR_USERNAME (also assign yourself in the Assignees sidebar)
+- Reviewer: @TEAMMATE (send an actual review request when opening the PR)
+- Expected files to change:
+- Labels: choose existing repository labels, if available (for example, `type:feature`, `difficulty:easy`, `workshop`)
+- Milestone: select only if the facilitator has prepared one
 
-<!-- 위의 예시 문구를 실제 내용으로 바꾸고, 비밀번호·토큰·개인정보를 넣지 마세요. -->
+<!-- Replace the example text with actual details. Do not include passwords, tokens, or personal data.
+Start feature/fix branches from the latest develop and target develop in your PR.
+Keep shared Redis storage and the Production/Preview/local room prefixes unchanged. -->

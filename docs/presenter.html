@@ -9,9 +9,10 @@
   :root{--bg:#0b1120;--panel:#151f33;--line:#30415c;--text:#f6f8ff;--muted:#b8c8e0;--accent:#79e1bf;--blue:#9bc9ff;--amber:#ffd38a}
   *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
   button,select{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer}button:hover,select:hover{border-color:var(--accent)}button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}button:disabled{opacity:.35;cursor:default}
-  .shell{min-height:100svh;display:flex;flex-direction:column;padding:24px 42px 18px;max-width:2048px;margin:auto}.toolbar,.footer{display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:20px;font-weight:700;letter-spacing:.08em;color:var(--accent)}.join-link{color:var(--accent);text-underline-offset:5px}.join-link:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.brand span{margin-left:16px;color:var(--muted);font-weight:500;letter-spacing:0}.toolbar-actions,.nav{display:flex;align-items:center;gap:10px}.toolbar-actions select{max-width:280px}
+  .shell{min-height:100svh;display:flex;flex-direction:column;padding:24px 42px 18px;max-width:2048px;margin:auto}.toolbar,.footer{display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:20px;font-weight:700;letter-spacing:.08em;color:var(--accent)}.join-link{color:var(--accent);text-underline-offset:5px}.join-link:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.brand span{margin-left:16px;color:var(--muted);font-weight:500;letter-spacing:0}.toolbar-actions{flex-wrap:wrap;justify-content:flex-end}.toolbar-actions,.nav{display:flex;align-items:center;gap:10px}.toolbar-actions select{max-width:280px}
   main{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;padding:20px 2.5vw 20px}.eyebrow{color:var(--accent);font-size:clamp(18px,1.8vw,24px);font-weight:650;letter-spacing:.06em;margin:0 0 14px}h1{font-size:clamp(72px,10vw,148px);line-height:1.05;letter-spacing:-.055em;margin:0 0 22px;font-weight:780;overflow-wrap:anywhere}.long h1{font-size:clamp(62px,8vw,112px)}.subtitle{margin:0 0 28px;color:var(--muted);font-size:clamp(24px,2.65vw,36px);line-height:1.4;letter-spacing:-.025em}.content{display:grid;grid-template-columns:1fr 1.15fr;gap:28px;align-items:stretch}.points{display:flex;flex-direction:column;justify-content:center;gap:18px}.point{font-size:clamp(22px,2.2vw,31px);line-height:1.45;margin:0;padding-left:22px;border-left:4px solid var(--accent)}.point.secondary{color:var(--muted);border-color:var(--line)}.code-card{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:22px 28px;display:flex;flex-direction:column;justify-content:center}.code-label{color:var(--accent);font-size:18px;font-weight:700;margin:0 0 14px;letter-spacing:.07em}pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere;font-size:clamp(20px,2vw,28px);line-height:1.55;margin:0;color:#e8f0ff}.checkpoint{color:var(--amber);font-size:clamp(20px,2vw,28px);line-height:1.5;margin:28px 0 0}.checkpoint::before{content:"✓ ";font-weight:750}
   .flow-view{padding:10px 0 12px}.flow-view .eyebrow{margin-left:12px;font-size:22px}.flow-image{display:block;width:100%;max-height:calc(100svh - 240px);object-fit:contain}.footer{color:var(--muted);font-size:17px;padding-top:15px;border-top:1px solid var(--line)}.keys{display:flex;gap:18px;flex-wrap:wrap}.keys kbd{font-family:inherit;color:var(--text);font-weight:700}.counter{font-variant-numeric:tabular-nums;min-width:65px;text-align:center}.progress{position:fixed;left:0;right:0;bottom:0;height:4px;background:#1b2941}.progress-fill{height:100%;background:var(--accent);transition:width .18s ease}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media (max-width:600px){.toolbar{align-items:flex-start;flex-direction:column}.toolbar-actions{justify-content:flex-start;gap:8px}.toolbar-actions select{max-width:160px}.toolbar-actions button{padding:8px 10px}}
   @media (max-width:900px){.shell{padding:18px 20px}.brand span,.keys{display:none}.toolbar-actions select{max-width:200px}main{padding:30px 0}h1{font-size:clamp(64px,11vw,100px)}.long h1{font-size:clamp(58px,8vw,90px)}.content{grid-template-columns:1fr;gap:22px}.point{font-size:24px}.subtitle{font-size:26px}pre{font-size:22px}.checkpoint{font-size:23px}.flow-image{max-height:calc(100svh - 240px)}.footer{font-size:14px}.nav button{padding:8px 11px}}
   @media (min-width:901px) and (max-height:850px){.shell{padding:18px 30px 14px}main{padding:14px 2vw}.eyebrow{font-size:18px;margin-bottom:10px}h1{font-size:clamp(60px,8vw,105px);margin-bottom:16px}.long h1{font-size:clamp(52px,6.4vw,76px)}.subtitle{font-size:28px;margin-bottom:18px}.point{font-size:24px}.points{gap:14px}.content{gap:24px}.code-card{padding:16px 22px}.code-label{font-size:14px;margin-bottom:12px}pre{font-size:21px;line-height:1.35}.checkpoint{font-size:22px;margin-top:20px}.footer{font-size:15px;padding-top:12px}.flow-view .eyebrow{font-size:18px}.flow-image{max-height:calc(100svh - 210px)}}
   @media (prefers-reduced-motion:reduce){.progress-fill{transition:none}}
@@ -23,6 +24,8 @@
   <header class="toolbar">
     <div class="brand">TEAM CHAT <span>100분 실습 · 여유 20분</span></div>
     <div class="toolbar-actions">
+      <label for="language-select" class="sr-only">언어 / Language</label>
+      <select id="language-select"><option value="ko" lang="ko">한국어</option><option value="en" lang="en">English</option></select>
       <label for="slide-select" class="sr-only">화면 선택</label><select id="slide-select"></select>
       <button id="flow-button" type="button" title="전체 흐름 (G)">흐름도 <span aria-hidden="true">G</span></button>
       <button id="fullscreen-button" type="button" title="전체 화면 (F)">전체 화면</button>
@@ -37,53 +40,376 @@
 <div class="progress" aria-hidden="true"><div id="progress-fill" class="progress-fill"></div></div>
 <p id="status" class="sr-only" role="status"></p>
 <script>
-  const slides = [
-    {title:"Flow",flow:true},
-    {title:"Clone",time:"10–20분 · 내 컴퓨터에서 시작",subtitle:"공유 저장소를 내 컴퓨터로",points:["원격 공유 저장소와의 연결을 확인","공유 채팅 기반은 준비됨 · UI부터 개선"],label:"터미널",code:"git clone https://github.com/eun8ang/teamChat.git\ncd teamChat\ngit switch develop\nnpm ci\nnpm run dev",check:"origin · develop · localhost 화면을 확인했나요?"},
-    {title:"Branching",time:"20–30분 · Issue 하나, 브랜치 하나",subtitle:"최신 develop에서 내 작업 이력을 만든다",points:["Issue: 목적 · 수용 기준 · 담당자","12는 본인의 실제 Issue 번호로 변경"],label:"브랜치 생성 + 이동",code:"git switch develop\ngit pull --ff-only origin develop\ngit switch -c feature/12-chat-title",check:"내 Issue와 작업 브랜치가 연결되었나요?"},
-    {title:"Checkout",time:"20–30분 · 지금 어디에서 작업하나요?",subtitle:"현재 작업할 브랜치를 바꾼다",points:["git switch: 기존 브랜치로 이동","git switch -c: 새로 만들고 바로 이동"],label:"현재 브랜치 확인",code:"git branch --show-current\ngit switch feature/12-chat-title\ngit status",check:"develop 대신 내 feature 브랜치에서 작업하나요?"},
-    {title:"Commit & Push",long:true,time:"30–50분 · AI 구현 → 직접 검증",subtitle:"로컬에 기록하고, 원격에 공유한다",points:["AI 변경도 작성자가 읽고 설명","서버 저장·동기화는 유지 · UI를 작게 변경"],label:"실제로 바꾼 파일만 STAGE",code:'git diff\ngit add src/config/chat.ts\ngit diff --staged\ngit commit -m "feat: update title (#12)"\ngit push -u origin feature/12-chat-title',check:"변경 이유와 실제 검증 결과를 설명할 수 있나요?"},
-    {title:"PR",time:"50–75분 · Pull Request",subtitle:"내 변경을 develop에 합치자고 제안한다",points:["base = 도착할 브랜치","compare = 내 변경이 있는 브랜치"],label:"GITHUB · NEW PULL REQUEST",code:"base: develop\ncompare: feature/12-chat-title\n\nRefs #12\n변경 이유 · 수용 기준 · 검증 결과",check:"base가 develop이고 Reviewer를 지정했나요?"},
-    {title:"Review PR",time:"50–75분 · 짝과 동시에 리뷰",subtitle:"AI 검토를 참고하고, 동료가 판단한다",points:["Issue · diff · CI · 실제 동작을 함께 확인","수정은 같은 브랜치에 commit · push"],label:"REVIEW CHANGES",code:"Comment          질문·의견\nRequest changes  수정이 필요함\nApprove          검토 완료",check:"작성자 외 동료의 승인이 남아 있나요?"},
-    {title:"Merge",time:"50–75분 · 검토한 변경 통합",subtitle:"승인된 PR을 develop에 합친다",points:["승인 · CI 성공 · 최신 base · 충돌 없음","Approve는 리뷰 결과, Merge는 통합"],label:"GITHUB",code:"Create a merge commit\n       ↓\nMerge pull request\n       ↓\ndevelop → CI → Preview 배포",check:"75분: develop 동결 → 공동 develop→main PR 한 개를 엽니다."},
-    {title:"Resolve merge conflicts",heading:"Resolve merge<br>conflicts",long:true,time:"75–90분 · 릴리스 PR 검사는 병렬로 진행",subtitle:"충돌한 양쪽의 의도를 보존한다",points:["HEAD: 실습방 표시 / incoming: 이모지","충돌 표시 제거 → 유효한 코드 → add · commit"],label:"TEAMCHAT에서 시작 → 출력된 CD 경로로 이동",code:'npm run workshop:conflict\n\n// 최종 src/config/chat.ts\nexport const CHAT_TITLE =\n  "💬 Team Chat · 실습방";',check:"충돌 해결 중 대표가 릴리스 PR을 사람 승인 · CI 후 머지합니다."},
-    {title:"Deploy",time:"90–100분 · Production 결과 확인과 제출",subtitle:"처음 접속한 채팅방에 개선을 반영한다",points:["develop→main PR · 사람 승인 · Merge","main Actions 성공 · SHA · 기존 기록 확인"],label:"MAIN → CI → VERCEL PRODUCTION",code:"develop → main 공동 PR\nCI 성공 + 동료 Approve → Merge\nmain push → CI/CD → Production\n\nteamchat-jet.vercel.app",check:"개선 UI · 실제 대화 · main SHA · Production URL을 확인하세요."}
-  ];
-  const stage=document.querySelector('#stage');
-  const picker=document.querySelector('#slide-select');
-  const previous=document.querySelector('#previous');
-  const next=document.querySelector('#next');
-  let index=0;
-  let beforeFlow=1;
-  const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-  slides.forEach((slide,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=`${String(i).padStart(2,'0')} · ${slide.title}`;picker.append(option)});
-  function render(target,updateHash=true){
-    const numeric=Number(target);
-    index=Number.isInteger(numeric)?Math.max(0,Math.min(slides.length-1,numeric)):0;
-    const slide=slides[index];
-    stage.className=slide.flow?'flow-view':slide.long?'long':'';
-    if(slide.flow){stage.innerHTML='<h1 class="sr-only">전체 Git 협업 흐름</h1><p class="eyebrow">입장: <a class="join-link" href="https://teamchat-jet.vercel.app" target="_blank" rel="noopener noreferrer">teamchat-jet.vercel.app</a> → 이름 입력 → 함께 대화</p><img class="flow-image" src="git-flow.svg" alt="develop에서 feature를 분기하고 작업·PR·동료 리뷰 후 develop에 합쳐 검증하고, 공동 develop→main PR을 사람 승인·머지한 뒤 Production으로 배포하는 Git 협업 흐름. 충돌이 있으면 양쪽 의도를 보존하고 재검사합니다.">'}
-    else{stage.innerHTML=`<p class="eyebrow">${escapeHtml(slide.time)}</p><h1>${slide.heading||escapeHtml(slide.title)}</h1><p class="subtitle">${escapeHtml(slide.subtitle)}</p><div class="content"><div class="points">${slide.points.map((point,i)=>`<p class="point ${i?'secondary':''}">${escapeHtml(point)}</p>`).join('')}</div><div class="code-card"><p class="code-label">${escapeHtml(slide.label)}</p><pre>${escapeHtml(slide.code)}</pre></div></div><p class="checkpoint">${escapeHtml(slide.check)}</p>`}
-    picker.value=String(index);previous.disabled=index===0;next.disabled=index===slides.length-1;
-    document.querySelector('#counter').textContent=`${index+1} / ${slides.length}`;
-    document.querySelector('#progress-fill').style.width=`${(index+1)/slides.length*100}%`;
-    document.title=`${slide.title} · Team Chat 협업 실습`;
-    if(updateHash)history.replaceState(null,'',`#${index}`);
+  const locales = {
+  "ko": {
+    "slides": [
+      {
+        "title": "Flow",
+        "flow": true
+      },
+      {
+        "title": "Clone",
+        "time": "10–20분 · 내 컴퓨터에서 시작",
+        "subtitle": "공유 저장소를 내 컴퓨터로",
+        "points": [
+          "원격 공유 저장소와의 연결을 확인",
+          "공유 채팅 기반은 준비됨 · UI부터 개선"
+        ],
+        "label": "터미널",
+        "code": "git clone https://github.com/eun8ang/teamChat.git\ncd teamChat\ngit switch develop\nnpm ci\nnpm run dev",
+        "check": "origin · develop · localhost 화면을 확인했나요?"
+      },
+      {
+        "title": "Branching",
+        "time": "20–30분 · Issue 하나, 브랜치 하나",
+        "subtitle": "최신 develop에서 내 작업 이력을 만든다",
+        "points": [
+          "Issue: 목적 · 수용 기준 · 담당자",
+          "12는 본인의 실제 Issue 번호로 변경"
+        ],
+        "label": "브랜치 생성 + 이동",
+        "code": "git switch develop\ngit pull --ff-only origin develop\ngit switch -c feature/12-chat-title",
+        "check": "내 Issue와 작업 브랜치가 연결되었나요?"
+      },
+      {
+        "title": "Checkout",
+        "time": "20–30분 · 지금 어디에서 작업하나요?",
+        "subtitle": "현재 작업할 브랜치를 바꾼다",
+        "points": [
+          "git switch: 기존 브랜치로 이동",
+          "git switch -c: 새로 만들고 바로 이동"
+        ],
+        "label": "현재 브랜치 확인",
+        "code": "git branch --show-current\ngit switch feature/12-chat-title\ngit status",
+        "check": "develop 대신 내 feature 브랜치에서 작업하나요?"
+      },
+      {
+        "title": "Commit & Push",
+        "long": true,
+        "time": "30–50분 · AI 구현 → 직접 검증",
+        "subtitle": "로컬에 기록하고, 원격에 공유한다",
+        "points": [
+          "AI 변경도 작성자가 읽고 설명",
+          "서버 저장·동기화는 유지 · UI를 작게 변경"
+        ],
+        "label": "실제로 바꾼 파일만 STAGE",
+        "code": "git diff\ngit add src/config/chat.ts\ngit diff --staged\ngit commit -m \"feat: update title (#12)\"\ngit push -u origin feature/12-chat-title",
+        "check": "변경 이유와 실제 검증 결과를 설명할 수 있나요?"
+      },
+      {
+        "title": "PR",
+        "time": "50–75분 · Pull Request",
+        "subtitle": "내 변경을 develop에 합치자고 제안한다",
+        "points": [
+          "base = 도착할 브랜치",
+          "compare = 내 변경이 있는 브랜치"
+        ],
+        "label": "GITHUB · NEW PULL REQUEST",
+        "code": "base: develop\ncompare: feature/12-chat-title\n\nRefs #12\n변경 이유 · 수용 기준 · 검증 결과",
+        "check": "base가 develop이고 Reviewer를 지정했나요?"
+      },
+      {
+        "title": "Review PR",
+        "time": "50–75분 · 짝과 동시에 리뷰",
+        "subtitle": "AI 검토를 참고하고, 동료가 판단한다",
+        "points": [
+          "Issue · diff · CI · 실제 동작을 함께 확인",
+          "수정은 같은 브랜치에 commit · push"
+        ],
+        "label": "REVIEW CHANGES",
+        "code": "Comment          질문·의견\nRequest changes  수정이 필요함\nApprove          검토 완료",
+        "check": "작성자 외 동료의 승인이 남아 있나요?"
+      },
+      {
+        "title": "Merge",
+        "time": "50–75분 · 검토한 변경 통합",
+        "subtitle": "승인된 PR을 develop에 합친다",
+        "points": [
+          "승인 · CI 성공 · 최신 base · 충돌 없음",
+          "Approve는 리뷰 결과, Merge는 통합"
+        ],
+        "label": "GITHUB",
+        "code": "Create a merge commit\n       ↓\nMerge pull request\n       ↓\ndevelop → CI → Preview 배포",
+        "check": "75분: develop 동결 → 공동 develop→main PR 한 개를 엽니다."
+      },
+      {
+        "title": "Resolve merge conflicts",
+        "heading": "Resolve merge<br>conflicts",
+        "long": true,
+        "time": "75–90분 · 릴리스 PR 검사는 병렬로 진행",
+        "subtitle": "충돌한 양쪽의 의도를 보존한다",
+        "points": [
+          "HEAD: 실습방 표시 / incoming: 이모지",
+          "충돌 표시 제거 → 유효한 코드 → add · commit"
+        ],
+        "label": "TEAMCHAT에서 시작 → 출력된 CD 경로로 이동",
+        "code": "npm run workshop:conflict\n\n// 최종 src/config/chat.ts\nexport const CHAT_TITLE =\n  \"💬 Team Chat · 실습방\";",
+        "check": "충돌 해결 중 대표가 릴리스 PR을 사람 승인 · CI 후 머지합니다."
+      },
+      {
+        "title": "Deploy",
+        "time": "90–100분 · Production 결과 확인과 제출",
+        "subtitle": "처음 접속한 채팅방에 개선을 반영한다",
+        "points": [
+          "develop→main PR · 사람 승인 · Merge",
+          "main Actions 성공 · SHA · 기존 기록 확인"
+        ],
+        "label": "MAIN → CI → VERCEL PRODUCTION",
+        "code": "develop → main 공동 PR\nCI 성공 + 동료 Approve → Merge\nmain push → CI/CD → Production\n\nteamchat-jet.vercel.app",
+        "check": "개선 UI · 실제 대화 · main SHA · Production URL을 확인하세요."
+      }
+    ],
+    "duration": "100분 실습 · 여유 20분",
+    "select": "화면 선택",
+    "flow": "흐름도",
+    "flowTitle": "전체 흐름 (G)",
+    "fullscreen": "전체 화면",
+    "previous": "← 이전",
+    "previousLabel": "이전 화면",
+    "next": "다음 →",
+    "nextLabel": "다음 화면",
+    "navigate": "이동",
+    "firstLast": "처음 / 끝",
+    "title": "Team Chat 협업 실습",
+    "flowHeading": "전체 Git 협업 흐름",
+    "join": "입장:",
+    "joinSteps": " → 이름 입력 → 함께 대화",
+    "flowImage": "git-flow.svg",
+    "flowAlt": "develop에서 feature를 분기하고 작업·PR·동료 리뷰 후 develop에 합쳐 검증하고, 공동 develop→main PR을 사람 승인·머지한 뒤 Production으로 배포하는 Git 협업 흐름. 충돌이 있으면 양쪽 의도를 보존하고 재검사합니다.",
+    "fullscreenError": "브라우저 메뉴에서 전체 화면을 선택하세요."
+  },
+  "en": {
+    "slides": [
+      {
+        "title": "Flow",
+        "flow": true
+      },
+      {
+        "title": "Clone",
+        "time": "10–20 min · Start on your computer",
+        "subtitle": "Copy the shared repository to your computer",
+        "points": [
+          "Check the connection to the shared remote",
+          "Configure .env.local first (see README)"
+        ],
+        "label": "TERMINAL",
+        "code": "git clone https://github.com/eun8ang/teamChat.git\ncd teamChat\ngit switch develop\nnpm ci\nnpm run dev",
+        "check": "Check origin, develop, and the local chat page."
+      },
+      {
+        "title": "Branching",
+        "time": "20–30 min · One issue, one branch",
+        "subtitle": "Start your work from the latest develop",
+        "points": [
+          "Issue: purpose, acceptance criteria, assignee",
+          "Replace 12 with your actual issue number"
+        ],
+        "label": "CREATE AND SWITCH BRANCH",
+        "code": "git switch develop\ngit pull --ff-only origin develop\ngit switch -c feature/12-chat-title",
+        "check": "Does your branch match your assigned issue?"
+      },
+      {
+        "title": "Checkout",
+        "time": "20–30 min · Where are you working?",
+        "subtitle": "Switch to the branch you want to work on",
+        "points": [
+          "git switch: move to an existing branch",
+          "git switch -c: create a branch and move to it"
+        ],
+        "label": "CHECK YOUR CURRENT BRANCH",
+        "code": "git branch --show-current\ngit switch feature/12-chat-title\ngit status",
+        "check": "Are you on your feature branch?"
+      },
+      {
+        "title": "Commit & Push",
+        "long": true,
+        "time": "30–50 min · AI implementation → Your verification",
+        "subtitle": "Record locally, then share with the remote",
+        "points": [
+          "Read and explain code written with AI",
+          "Keep shared storage and sync working"
+        ],
+        "label": "STAGE ONLY FILES YOU CHANGED",
+        "code": "git diff\ngit add src/config/chat.ts\ngit diff --staged\ngit commit -m \"feat: update title (#12)\"\ngit push -u origin feature/12-chat-title",
+        "check": "Explain why you changed it and what you verified."
+      },
+      {
+        "title": "PR",
+        "time": "50–75 min · Pull Request",
+        "subtitle": "Propose merging your changes into develop",
+        "points": [
+          "base = destination branch",
+          "compare = branch containing your changes"
+        ],
+        "label": "GITHUB · NEW PULL REQUEST",
+        "code": "base: develop\ncompare: feature/12-chat-title\n\nRefs #12\nReason · Acceptance criteria · Check results",
+        "check": "Is the base develop? Did you request a reviewer?"
+      },
+      {
+        "title": "Review PR",
+        "time": "50–75 min · Review with your partner",
+        "subtitle": "Use AI feedback; a teammate makes the decision",
+        "points": [
+          "Check the issue, diff, CI, and app behavior",
+          "Commit and push fixes to the same branch"
+        ],
+        "label": "REVIEW CHANGES",
+        "code": "Comment          Questions or feedback\nRequest changes  Fixes required\nApprove          Review complete",
+        "check": "Has someone other than the author approved?"
+      },
+      {
+        "title": "Merge",
+        "time": "50–75 min · Integrate reviewed work",
+        "subtitle": "Merge the approved PR into develop",
+        "points": [
+          "Approval · Passing CI · Current base · No conflicts",
+          "Approve records a review; Merge integrates code"
+        ],
+        "label": "GITHUB",
+        "code": "Create a merge commit\n       ↓\nMerge pull request\n       ↓\ndevelop → CI → Preview deployment",
+        "check": "At 75 min: freeze develop and open one shared develop → main PR."
+      },
+      {
+        "title": "Resolve merge conflicts",
+        "heading": "Resolve merge<br>conflicts",
+        "long": true,
+        "time": "75–90 min · Release PR checks run in parallel",
+        "subtitle": "Preserve the intent of both changes",
+        "points": [
+          "HEAD: workshop room label / incoming: emoji",
+          "Remove markers → valid code → add · commit"
+        ],
+        "label": "RUN IN TEAMCHAT → USE THE PRINTED CD COMMAND",
+        "code": "npm run workshop:conflict:en\n\n// Final src/config/chat.ts\nexport const CHAT_TITLE =\n  \"💬 Team Chat · Workshop room\";",
+        "check": "During the exercise, the release pair reviews CI and merges the release PR."
+      },
+      {
+        "title": "Deploy",
+        "time": "90–100 min · Verify Production and submit",
+        "subtitle": "See improvements in the chat you joined",
+        "points": [
+          "develop → main PR · Human approval · Merge",
+          "Check main Actions, SHA, and existing history"
+        ],
+        "label": "MAIN → CI → VERCEL PRODUCTION",
+        "code": "One shared develop → main PR\nPassing CI + peer approval → Merge\nmain push → CI/CD → Production\n\nteamchat-jet.vercel.app",
+        "check": "Verify the UI, shared messages, main SHA, and Production URL."
+      }
+    ],
+    "duration": "100 min practice · 20 min buffer",
+    "select": "Select slide",
+    "flow": "Git flow",
+    "flowTitle": "Git flow (G)",
+    "fullscreen": "Fullscreen",
+    "previous": "← Back",
+    "previousLabel": "Previous slide",
+    "next": "Next →",
+    "nextLabel": "Next slide",
+    "navigate": "Navigate",
+    "firstLast": "First / Last",
+    "title": "Team Chat Workshop",
+    "flowHeading": "Git collaboration workflow",
+    "join": "Join:",
+    "joinSteps": " → Enter your name → Chat together",
+    "flowImage": "git-flow.en.svg",
+    "flowAlt": "Create a feature branch from develop, implement and review a PR, then merge into develop and verify Preview. Review and merge one shared develop-to-main PR to deploy to Production. Resolve conflicts by preserving both intentions and checking again.",
+    "fullscreenError": "Use your browser menu to enter fullscreen."
   }
-  function toggleFlow(){if(index===0)render(beforeFlow);else{beforeFlow=index;render(0)}}
-  async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{document.querySelector('#status').textContent='브라우저 메뉴에서 전체 화면을 선택하세요.'}}
-  previous.addEventListener('click',()=>render(index-1));next.addEventListener('click',()=>render(index+1));picker.addEventListener('change',event=>render(event.target.value));document.querySelector('#flow-button').addEventListener('click',toggleFlow);document.querySelector('#fullscreen-button').addEventListener('click',fullscreen);
-  window.addEventListener('keydown',event=>{
-    if(event.altKey||event.ctrlKey||event.metaKey||event.target.closest('select,input,textarea,[contenteditable="true"]'))return;
-    if(event.key==='ArrowRight'||event.key==='PageDown'||event.code==='Space'&&event.target.tagName!=='BUTTON'){event.preventDefault();render(index+1)}
-    else if(event.key==='ArrowLeft'||event.key==='PageUp'){event.preventDefault();render(index-1)}
-    else if(event.key==='Home'){event.preventDefault();render(0)}
-    else if(event.key==='End'){event.preventDefault();render(slides.length-1)}
-    else if(event.key.toLowerCase()==='g'){event.preventDefault();toggleFlow()}
-    else if(event.key.toLowerCase()==='f'){event.preventDefault();fullscreen()}
+};
+  const stage = document.querySelector('#stage');
+  const picker = document.querySelector('#slide-select');
+  const languagePicker = document.querySelector('#language-select');
+  const previous = document.querySelector('#previous');
+  const next = document.querySelector('#next');
+  let language = new URL(location.href).searchParams.get('lang') === 'en' ? 'en' : 'ko';
+  let index = 0;
+  let beforeFlow = 1;
+  const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+  function render(target, updateHash = true) {
+    const text = locales[language];
+    const slides = text.slides;
+    const numeric = Number(target);
+    index = Number.isInteger(numeric) ? Math.max(0, Math.min(slides.length - 1, numeric)) : 0;
+    const slide = slides[index];
+    stage.className = slide.flow ? 'flow-view' : slide.long ? 'long' : '';
+    if (slide.flow) {
+      stage.innerHTML = `<h1 class="sr-only">${escapeHtml(text.flowHeading)}</h1><p class="eyebrow">${escapeHtml(text.join)} <a class="join-link" href="https://teamchat-jet.vercel.app" target="_blank" rel="noopener noreferrer">teamchat-jet.vercel.app</a>${escapeHtml(text.joinSteps)}</p><img class="flow-image" src="${text.flowImage}" alt="${escapeHtml(text.flowAlt)}">`;
+    } else {
+      stage.innerHTML = `<p class="eyebrow">${escapeHtml(slide.time)}</p><h1>${slide.heading || escapeHtml(slide.title)}</h1><p class="subtitle">${escapeHtml(slide.subtitle)}</p><div class="content"><div class="points">${slide.points.map((point, i) => `<p class="point ${i ? 'secondary' : ''}">${escapeHtml(point)}</p>`).join('')}</div><div class="code-card"><p class="code-label">${escapeHtml(slide.label)}</p><pre>${escapeHtml(slide.code)}</pre></div></div><p class="checkpoint">${escapeHtml(slide.check)}</p>`;
+    }
+    picker.value = String(index);
+    previous.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    document.querySelector('#counter').textContent = `${index + 1} / ${slides.length}`;
+    document.querySelector('#progress-fill').style.width = `${(index + 1) / slides.length * 100}%`;
+    document.title = `${slide.title} · ${text.title}`;
+    if (updateHash) history.replaceState(null, '', `#${index}`);
+  }
+
+  function applyLanguage() {
+    const text = locales[language];
+    document.documentElement.lang = language;
+    languagePicker.value = language;
+    document.querySelector('.brand span').textContent = text.duration;
+    document.querySelector('label[for="slide-select"]').textContent = text.select;
+    const flowButton = document.querySelector('#flow-button');
+    flowButton.innerHTML = `${escapeHtml(text.flow)} <span aria-hidden="true">G</span>`;
+    flowButton.title = text.flowTitle;
+    const fullscreenButton = document.querySelector('#fullscreen-button');
+    fullscreenButton.textContent = text.fullscreen;
+    fullscreenButton.title = `${text.fullscreen} (F)`;
+    previous.textContent = text.previous;
+    previous.setAttribute('aria-label', text.previousLabel);
+    next.textContent = text.next;
+    next.setAttribute('aria-label', text.nextLabel);
+    document.querySelector('.keys').innerHTML = `<span><kbd>← → Space</kbd> ${text.navigate}</span><span><kbd>G</kbd> ${text.flow}</span><span><kbd>F</kbd> ${text.fullscreen}</span><span><kbd>Home / End</kbd> ${text.firstLast}</span>`;
+    document.querySelector('#status').textContent = '';
+    picker.replaceChildren(...text.slides.map((slide, i) => {
+      const option = document.createElement('option');
+      option.value = String(i);
+      option.textContent = `${String(i).padStart(2, '0')} · ${slide.title}`;
+      return option;
+    }));
+  }
+
+  languagePicker.addEventListener('change', () => {
+    language = languagePicker.value === 'en' ? 'en' : 'ko';
+    const url = new URL(location.href);
+    url.searchParams.set('lang', language);
+    history.replaceState(null, '', url);
+    applyLanguage();
+    render(index, false);
   });
-  window.addEventListener('hashchange',()=>render(location.hash.slice(1),false));
-  render(location.hash.slice(1)||0,false);
+  function toggleFlow() {
+    if (index === 0) render(beforeFlow);
+    else { beforeFlow = index; render(0); }
+  }
+  async function fullscreen() {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      document.querySelector('#status').textContent = locales[language].fullscreenError;
+    }
+  }
+  previous.addEventListener('click', () => render(index - 1));
+  next.addEventListener('click', () => render(index + 1));
+  picker.addEventListener('change', event => render(event.target.value));
+  document.querySelector('#flow-button').addEventListener('click', toggleFlow);
+  document.querySelector('#fullscreen-button').addEventListener('click', fullscreen);
+  window.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest?.('select,input,textarea,[contenteditable="true"]')) return;
+    if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.code === 'Space' && event.target.tagName !== 'BUTTON') { event.preventDefault(); render(index + 1); }
+    else if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); render(index - 1); }
+    else if (event.key === 'Home') { event.preventDefault(); render(0); }
+    else if (event.key === 'End') { event.preventDefault(); render(locales[language].slides.length - 1); }
+    else if (event.key.toLowerCase() === 'g') { event.preventDefault(); toggleFlow(); }
+    else if (event.key.toLowerCase() === 'f') { event.preventDefault(); fullscreen(); }
+  });
+  window.addEventListener('hashchange', () => render(location.hash.slice(1), false));
+  applyLanguage();
+  render(location.hash.slice(1) || 0, false);
 </script>
 </body>
 </html>
