@@ -8,6 +8,10 @@ import { useChat } from "@/hooks/useChat";
 import { useIdentity } from "@/hooks/useIdentity";
 import type { ChatIdentity, ChatMessage } from "@/types/chat";
 
+// Presence has its own schedule and tests (presence-hook.test.tsx); keep these
+// message-polling request counts independent of it.
+vi.mock("@/hooks/usePresence", () => ({ usePresence: () => ({ status: "loading", snapshot: null }) }));
+
 const alex: ChatIdentity = { clientId: "00000000-0000-4000-8000-000000000001", displayName: "Alex" };
 const sam: ChatIdentity = { clientId: "00000000-0000-4000-8000-000000000002", displayName: "Sam" };
 const message = (id: string, identity = sam, content = `Message ${id}`): ChatMessage => ({ id, ...identity, content, createdAt: "2026-10-20T09:05:00.000Z" });

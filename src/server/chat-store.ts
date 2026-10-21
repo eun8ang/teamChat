@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { ChatMessage } from "@/types/chat";
 import { redisCommand, RedisUnavailableError } from "@/server/redis";
+import { roomKeyPrefix } from "@/server/room";
 
 const HISTORY_LIMIT = 100;
 const MAX_RETAINED_MESSAGES = 500;
@@ -39,13 +40,6 @@ export function isValidCursor(value: string): boolean {
   if (!/^(0|[1-9][0-9]{0,19})-(0|[1-9][0-9]{0,19})$/.test(value)) return false;
   const maximum = BigInt("18446744073709551615");
   return value.split("-").every((part) => BigInt(part) <= maximum);
-}
-
-function roomKeyPrefix(): string {
-  const room = process.env.CHAT_ROOM_PREFIX || process.env.VERCEL_ENV || "development";
-  if (!/^[A-Za-z0-9:_-]{1,80}$/.test(room)) throw new RedisUnavailableError();
-  // All EVAL keys share one Redis Cluster hash slot, even across clients.
-  return `teamchat:{${room}}`;
 }
 
 function parseStoredMessage(value: unknown): ChatMessage {

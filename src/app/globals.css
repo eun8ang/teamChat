@@ -116,6 +116,25 @@ svg { flex-shrink: 0; }
 .demo-notice { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 11px 30px; background: #fcfbfe; border-bottom: 1px solid #f2f0f7; color: #8b829b; }
 .notice-icon { display: grid; place-items: center; flex-shrink: 0; width: 13px; height: 13px; border: 1px solid #b7adc8; font-size: 9px; font-weight: 600; border-radius: 50%; }
 .demo-notice p { font-size: 10px; line-height: 1.6; margin: 0; }
+.online-participants { flex: 0 0 auto; border-bottom: 1px solid #f2f0f7; }
+.online-participants > summary { display: flex; align-items: center; gap: 10px; padding: 9px 30px; list-style: none; cursor: pointer; color: #6f6680; font-size: 10px; font-weight: 600; }
+.online-participants > summary::-webkit-details-marker { display: none; }
+.online-participants > summary::after { content: "▸"; color: #a79fb4; font-size: 10px; transition: transform .15s; }
+.online-participants[open] > summary::after { transform: rotate(90deg); }
+.online-participants > summary:focus-visible { outline-offset: -3px; }
+.online-participants-title { flex-shrink: 0; }
+.online-count { display: flex; align-items: center; gap: 6px; min-width: 0; margin-left: auto; color: #8b829b; font-size: 9px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.presence-loading .status-dot, .presence-stale .status-dot { background: #cfaa62; }
+.presence-unavailable .status-dot { background: #c27a66; }
+.online-participants-body { padding: 0 30px 12px; }
+.presence-note { margin: 0 0 8px; color: #8b829b; font-size: 9px; line-height: 1.6; }
+.participant-scroll { max-height: 164px; overflow-y: auto; border-radius: 6px; scrollbar-width: thin; scrollbar-color: #e4dfed transparent; }
+.participant-scroll:focus-visible { outline-offset: 2px; }
+.participant-roster { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.participant-row { display: flex; align-items: center; gap: 8px; min-width: 0; color: #5f5870; font-size: 11px; }
+.participant-avatar { display: grid; place-items: center; flex: 0 0 22px; width: 22px; height: 22px; border-radius: 7px; background: #ece5fa; color: #8761bb; font-size: 10px; font-weight: 650; }
+.participant-name { min-width: 0; overflow-wrap: anywhere; }
+.participant-you { flex-shrink: 0; padding: 1px 5px; border: 1px solid #e3dcf3; border-radius: 4px; color: #735cbe; font-size: 8px; font-weight: 600; }
 
 .message-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 32px; scrollbar-width: thin; scrollbar-color: #e4dfed transparent; }
 .message-scroll:focus-visible { outline-offset: -4px; }
@@ -198,7 +217,7 @@ svg { flex-shrink: 0; }
   .brand-name { font-size: 17px; }
   .brand-caption { font-size: 6.5px; letter-spacing: 1.4px; }
   .chat-header { padding: 22px 23px; }
-  .chat-toolbar, .demo-notice { padding-left: 23px; padding-right: 23px; }
+  .chat-toolbar, .demo-notice, .online-participants > summary, .online-participants-body { padding-left: 23px; padding-right: 23px; }
   .message-scroll { padding-left: 24px; padding-right: 24px; }
   .composer { padding-left: 21px; padding-right: 21px; }
   .conversation-intro h2 { font-size: 19px; }
@@ -234,6 +253,10 @@ svg { flex-shrink: 0; }
   .message-search svg { width: 13px; height: 13px; }
   .demo-notice { padding: 10px 18px; gap: 7px; }
   .demo-notice p { font-size: 9px; line-height: 1.6; }
+  .online-participants > summary { padding: 8px 18px; gap: 8px; font-size: 9px; }
+  .online-participants-body { padding: 0 18px 10px; }
+  .participant-scroll { max-height: 120px; }
+  .participant-row { font-size: 10px; }
   .message-scroll { padding: 0 18px; }
   .conversation-intro { padding: 24px 0 20px; }
   .welcome-symbol { width: 36px; height: 36px; font-size: 25px; border-radius: 11px; margin-bottom: 13px; }
@@ -278,7 +301,8 @@ svg { flex-shrink: 0; }
   .sidebar { padding: 0 14px; }
   .chat-header { padding: 16px 14px; }
   .chat-header p { font-size: 8px; }
-  .chat-toolbar, .demo-notice { padding-left: 14px; padding-right: 14px; }
+  .chat-toolbar, .demo-notice, .online-participants > summary, .online-participants-body { padding-left: 14px; padding-right: 14px; }
+  .online-count { font-size: 8px; }
   .demo-badge { padding: 5px; font-size: 7px; }
   .chat-heading { gap: 8px; }
 }
