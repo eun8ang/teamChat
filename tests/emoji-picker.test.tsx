@@ -82,7 +82,7 @@ describe("emoji picker", () => {
     openPicker();
     chooseEmoji("Fire");
     expect(input.value).toBe("a".repeat(MAX_MESSAGE_LENGTH - 1));
-    expect(screen.getByRole("status")).toHaveTextContent("Emoji not added");
+    expect(screen.getByRole("status")).toHaveTextContent("That emoji doesn’t fit");
   });
 
   it("accepts an insertion that exactly fits the limit", () => {
@@ -105,11 +105,11 @@ describe("emoji picker", () => {
     await user.keyboard("{Escape}");
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(trigger).toHaveFocus();
-    expect(document.querySelector(".emoji-panel")).toHaveAttribute("hidden");
+    expect(document.querySelector(".emoji-picker-panel")).toHaveAttribute("hidden");
     expect(input.value).toBe("");
   });
 
-  it("closes on Escape without moving focus away from the textarea", () => {
+  it("moves focus into the dialog on opening and restores the trigger on Escape", () => {
     const { input } = renderComposer();
     typeDraft(input, "hi");
     input.focus();
@@ -117,7 +117,7 @@ describe("emoji picker", () => {
     expect(screen.getByRole("button", { name: "Insert emoji" })).toHaveAttribute("aria-expanded", "true");
     fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
     expect(screen.getByRole("button", { name: "Insert emoji" })).toHaveAttribute("aria-expanded", "false");
-    expect(input).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Insert emoji" })).toHaveFocus();
   });
 
   it("supports keyboard selection with Enter and dismisses on outside pointer activation", async () => {
@@ -125,7 +125,6 @@ describe("emoji picker", () => {
     const { input } = renderComposer();
     screen.getByRole("button", { name: "Insert emoji" }).focus();
     await user.keyboard("{Enter}");
-    await user.tab();
     expect(screen.getByRole("button", { name: "Grinning face" })).toHaveFocus();
     await user.keyboard("{Enter}");
     expect(input.value).toBe("😀");
@@ -139,8 +138,8 @@ describe("emoji picker", () => {
     const { onSend, input } = renderComposer();
     typeDraft(input, "hi");
     openPicker();
-    const options = screen.getAllByRole("button").filter((button) => button.classList.contains("emoji-option"));
-    expect(options).toHaveLength(16);
+    const options = screen.getAllByRole("button").filter((button) => button.classList.contains("emoji-choice"));
+    expect(options).toHaveLength(18);
     for (const option of options) expect(option).toHaveAttribute("type", "button");
     chooseEmoji("Smiling face");
     expect(input.value).toBe("hi😊");
@@ -157,9 +156,9 @@ describe("emoji picker", () => {
     typeDraft(input, "안녕");
     fireEvent.compositionStart(input);
     openPicker();
-    chooseEmoji("Fire");
+    expect(screen.getByRole("button", { name: "Insert emoji" })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Fire" })).not.toBeInTheDocument();
     expect(input.value).toBe("안녕");
-    expect(screen.getByRole("status")).toHaveTextContent("Finish composing");
     fireEvent.compositionEnd(input);
   });
 });

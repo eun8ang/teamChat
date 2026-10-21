@@ -2,83 +2,96 @@
 
 import { useEffect, useId, useRef, useState, type FocusEvent } from "react";
 
-export const EMOJI_OPTIONS = [
-  { emoji: "😀", name: "Grinning face" },
-  { emoji: "😂", name: "Face with tears of joy" },
-  { emoji: "😊", name: "Smiling face" },
-  { emoji: "😍", name: "Smiling face with heart-eyes" },
-  { emoji: "😎", name: "Smiling face with sunglasses" },
-  { emoji: "🤔", name: "Thinking face" },
-  { emoji: "😮", name: "Surprised face" },
-  { emoji: "😢", name: "Crying face" },
-  { emoji: "👍", name: "Thumbs up" },
-  { emoji: "👏", name: "Clapping hands" },
-  { emoji: "🙌", name: "Raising hands" },
-  { emoji: "🙏", name: "Folded hands" },
-  { emoji: "🎉", name: "Party popper" },
-  { emoji: "❤️", name: "Red heart" },
-  { emoji: "🔥", name: "Fire" },
-  { emoji: "✅", name: "Check mark button" },
-] as const;
-
 interface EmojiPickerProps {
   onSelect: (emoji: string) => void;
   disabled?: boolean;
 }
 
+const EMOJI_CHOICES = [
+  { emoji: "😀", name: "Grinning face" },
+  { emoji: "😊", name: "Smiling face" },
+  { emoji: "😂", name: "Face with tears of joy" },
+  { emoji: "😍", name: "Smiling face with heart-eyes" },
+  { emoji: "👍", name: "Thumbs up" },
+  { emoji: "👏", name: "Clapping hands" },
+  { emoji: "🎉", name: "Party popper" },
+  { emoji: "🔥", name: "Fire" },
+  { emoji: "✅", name: "Check mark" },
+  { emoji: "❤️", name: "Red heart" },
+  { emoji: "👋", name: "Waving hand" },
+  { emoji: "⭐", name: "Star" },
+  { emoji: "😎", name: "Smiling face with sunglasses" },
+  { emoji: "🤔", name: "Thinking face" },
+  { emoji: "😮", name: "Surprised face" },
+  { emoji: "😢", name: "Crying face" },
+  { emoji: "🙌", name: "Raising hands" },
+  { emoji: "🙏", name: "Folded hands" },
+] as const;
+
 export function EmojiPicker({ onSelect, disabled = false }: EmojiPickerProps) {
   const [open, setOpen] = useState(false);
-  const isOpen = open && !disabled;
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
+  // Drop a stale open panel when sending or IME composition disables insertion.
+  if (disabled && open) setOpen(false);
+  const expanded = open && !disabled;
 
-  // Outside pointer activation closes the panel without moving focus to the trigger.
-  // Escape works wherever focus is, since some browsers do not focus a button on click.
   useEffect(() => {
-    if (!isOpen) return;
+    if (!expanded) return;
+    panelRef.current?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
+
     function handlePointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      const target = event.target;
+      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      setOpen(false);
     }
-    function handleEscape(event: globalThis.KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      const focusWasInside = rootRef.current?.contains(document.activeElement) ?? false;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
       event.preventDefault();
       setOpen(false);
-      if (focusWasInside) triggerRef.current?.focus();
+      triggerRef.current?.focus({ preventScroll: true });
     }
+
     document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
+  }, [expanded]);
 
-  // Keyboard focus leaving the picker closes it, without trapping Tab.
-  function handleBlur(event: FocusEvent<HTMLDivElement>) {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false);
+  function toggle() {
+    if (disabled) return;
+    setOpen((value) => !value);
   }
 
-  function handleSelect(emoji: string) {
-    setOpen(false);
-    // Focus the trigger first; the composer moves focus to the textarea after a successful insert.
-    triggerRef.current?.focus();
+  function choose(emoji: string) {
+    if (disabled) return;
     onSelect(emoji);
+    setOpen(false);
+  }
+
+  function handleBlur(event: FocusEvent<HTMLDivElement>) {
+    const next = event.relatedTarget;
+    if (!(next instanceof Node) || rootRef.current?.contains(next)) return;
+    setOpen(false);
   }
 
   return (
     <div className="emoji-picker" ref={rootRef} onBlur={handleBlur}>
       <button
-        ref={triggerRef}
         type="button"
         className="emoji-button"
+        ref={triggerRef}
         aria-label="Insert emoji"
-        aria-expanded={isOpen}
+        aria-expanded={expanded}
         aria-controls={panelId}
-        title="Insert emoji"
+        aria-haspopup="dialog"
         disabled={disabled}
-        onClick={() => setOpen((current) => !current)}
+        onClick={toggle}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="8.25" stroke="currentColor" strokeWidth="1.7" />
@@ -87,17 +100,18 @@ export function EmojiPicker({ onSelect, disabled = false }: EmojiPickerProps) {
           <circle cx="15" cy="9" r="1" fill="currentColor" />
         </svg>
       </button>
-      <div id={panelId} className="emoji-panel" role="group" aria-label="Emoji choices" hidden={!isOpen}>
-        {EMOJI_OPTIONS.map(({ emoji, name }) => (
-          <button
-            key={emoji}
-            type="button"
-            className="emoji-option"
-            aria-label={name}
-            title={name}
-            onClick={() => handleSelect(emoji)}
-          >
-            <span aria-hidden="true">{emoji}</span>
+      <div
+        id={panelId}
+        ref={panelRef}
+        className="emoji-picker-panel"
+        role="dialog"
+        aria-label="Choose an emoji"
+        aria-modal="false"
+        hidden={!expanded}
+      >
+        {EMOJI_CHOICES.map((choice) => (
+          <button key={choice.name} type="button" className="emoji-choice" aria-label={choice.name} onClick={() => choose(choice.emoji)}>
+            <span aria-hidden="true">{choice.emoji}</span>
           </button>
         ))}
       </div>
