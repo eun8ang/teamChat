@@ -150,7 +150,7 @@ svg { flex-shrink: 0; }
 .avatar-guide { background: #e5f1eb; color: #558b72; font-size: 24px; }
 .avatar-user { background: #ece5fa; color: #8761bb; font-size: 13px; font-weight: 650; }
 .message-content { max-width: min(82%, 590px); min-width: 0; }
-.message-meta { display: flex; align-items: center; gap: 7px; padding: 1px 0 8px; }
+.message-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 1px 0 8px; }
 .message-author { min-width: 0; max-width: 240px; font-size: 11px; font-weight: 620; overflow-wrap: anywhere; }
 .guide-label { color: #968da3; border: 1px solid #e8e3ed; border-radius: 3px; font-size: 6px; font-weight: 550; letter-spacing: .5px; padding: 2px 3px; }
 .message-meta time { font-size: 8px; color: #aaa3b3; margin-left: 2px; }
@@ -159,6 +159,14 @@ svg { flex-shrink: 0; }
 .message-row-user { flex-direction: row-reverse; }
 .message-row-user .message-meta { justify-content: flex-end; }
 .message-row-user .message-bubble { background: #f0eafd; color: #665080; border-radius: 10px 0 10px 10px; }
+/* The action stays visible rather than hover-only so touch participants can reach it. */
+.message-copy { display: inline-flex; align-items: center; min-width: 0; }
+.copy-button { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 24px; padding: 0; border: none; border-radius: 6px; background: transparent; color: #b3abbe; outline-offset: 2px; transition: color .15s, background .15s; }
+.copy-button:hover, .copy-button:focus-visible { color: #7b6d93; background: #f3f0f9; }
+.copy-feedback { min-width: 0; font-size: 9px; line-height: 1.5; color: #8d8599; overflow-wrap: anywhere; }
+.copy-feedback:not(:empty) { margin-left: 6px; }
+.copy-feedback-copied { color: var(--green); }
+.copy-feedback-failed { color: #a0604f; }
 .typing-status { min-height: 28px; display: flex; align-items: flex-start; gap: 7px; padding: 0 0 10px 42px; font-size: 9px; color: #9c93a9; }
 .typing-dots { display: flex; align-items: center; gap: 3px; height: 12px; }
 .typing-dots i { width: 3px; height: 3px; background: #b4a6ca; border-radius: 50%; animation: typing 1s ease-in-out infinite; }
@@ -279,6 +287,7 @@ svg { flex-shrink: 0; }
   .message-author { font-size: 10px; }
   .message-author { max-width: 155px; }
   .message-meta time { font-size: 7px; }
+  .copy-button { width: 28px; height: 28px; flex-basis: 28px; }
   .message-bubble { font-size: 11px; padding: 10px 12px; line-height: 1.75; }
   .typing-status { padding-left: 36px; font-size: 8px; }
   .composer { padding: 0 14px 11px; }
