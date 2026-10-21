@@ -155,8 +155,15 @@ svg { flex-shrink: 0; }
 .composer textarea:focus-visible { outline: none; }
 .composer-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .composer-tools { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.emoji-button { display: grid; place-items: center; width: 27px; height: 27px; border: none; padding: 0; background: transparent; color: #a9a0b6; }
+.emoji-button { display: grid; place-items: center; width: 27px; height: 27px; border: none; padding: 0; background: transparent; color: #857a96; }
 .emoji-button:disabled { opacity: .7; }
+.emoji-button:hover:not(:disabled), .emoji-button[aria-expanded="true"] { color: #6c55d9; }
+.emoji-picker { position: relative; display: flex; }
+.emoji-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 10; display: grid; grid-template-columns: repeat(8, 36px); gap: 4px; width: max-content; max-width: calc(100vw - 48px); padding: 8px; border: 1px solid #d8d2e6; border-radius: 10px; background: var(--surface); box-shadow: 0 8px 24px #2a1f4026; }
+.emoji-panel[hidden] { display: none; }
+.emoji-choice { display: grid; place-items: center; width: 36px; height: 36px; border: none; border-radius: 6px; padding: 0; background: transparent; font-size: 20px; line-height: 1; }
+.emoji-choice:hover { background: var(--purple-soft); }
+.emoji-choice:focus-visible { outline-offset: 0; background: var(--purple-soft); }
 .composer-tools-hint { font-size: 9px; color: #b1aaba; }
 .send-button { display: flex; align-items: center; justify-content: center; gap: 11px; border: 1px solid #6b50c5; border-radius: 6px; padding: 8px 13px; background: #7658cc; color: white; font-size: 11px; font-weight: 550; transition: background .15s; }
 .send-button:hover:not(:disabled) { background: #6343b8; }
@@ -254,6 +261,8 @@ svg { flex-shrink: 0; }
   .composer-box { padding: 11px 10px 9px; border-radius: 8px; }
   .composer textarea { font-size: 12px; min-height: 46px; }
   .composer-tools-hint { display: none; }
+  .emoji-panel { grid-template-columns: repeat(4, 40px); }
+  .emoji-choice { width: 40px; height: 40px; }
   .send-button { padding: 8px 11px; font-size: 10px; }
   .composer-caption { font-size: 7px; gap: 6px; padding-top: 8px; }
   .composer-caption p > span { margin: 0 2px; }
