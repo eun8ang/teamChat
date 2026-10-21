@@ -6,13 +6,16 @@ import { ChatStats } from "@/components/chat/ChatStats";
 import { MessageComposer } from "@/components/chat/MessageComposer";
 import { MessageList } from "@/components/chat/MessageList";
 import { MessageSearch } from "@/components/chat/MessageSearch";
+import { OnlineParticipants } from "@/components/chat/OnlineParticipants";
 import { ParticipantSetup } from "@/components/chat/ParticipantSetup";
 import { useChat } from "@/hooks/useChat";
 import { useIdentity } from "@/hooks/useIdentity";
+import { usePresence } from "@/hooks/usePresence";
 
 export default function Home() {
   const { identity, isReady, join } = useIdentity();
   const { messages, sendMessage, connectionStatus, isSending, error, retry } = useChat(identity);
+  const presence = usePresence(identity);
 
   return (
     <div className="app-shell">
@@ -44,6 +47,7 @@ export default function Home() {
           <ChatHeader />
           <div className="chat-toolbar"><div className="conversation-tab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-3 2v-10a9 9 0 0 1 18 0Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></svg>Conversation</div><MessageSearch /></div>
           <div className="demo-notice"><span className="notice-icon" aria-hidden="true">i</span><p>This public workshop room is shared with everyone here. Messages remain after refresh. Please keep personal information out of the conversation.</p></div>
+          <OnlineParticipants presence={presence} currentClientId={identity?.clientId ?? null} />
           <MessageList messages={messages} currentClientId={identity?.clientId ?? null} isLoading={connectionStatus !== "connected" && messages.length === 0} />
           {error && <div className="chat-error" role="alert"><p>{error}</p>{connectionStatus === "reconnecting" && <button type="button" onClick={retry}>Reconnect</button>}</div>}
           {!isReady ? <p className="identity-loading" role="status">Opening your workshop session…</p> : identity ? <MessageComposer onSend={sendMessage} isSending={isSending} /> : <ParticipantSetup onJoin={join} />}
