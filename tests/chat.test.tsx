@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Home from "@/app/page";
 import { MessageComposer } from "@/components/chat/MessageComposer";
 import { MessageList } from "@/components/chat/MessageList";
-import { CHAT_TITLE, IDENTITY_STORAGE_KEY, MESSAGE_POLL_INTERVAL_MS, MESSAGE_REQUEST_TIMEOUT_MS } from "@/config/chat";
+import { CHAT_TITLE, IDENTITY_STORAGE_KEY, MAX_MESSAGE_LENGTH, MESSAGE_POLL_INTERVAL_MS, MESSAGE_REQUEST_TIMEOUT_MS } from "@/config/chat";
 import { useChat } from "@/hooks/useChat";
 import { useIdentity } from "@/hooks/useIdentity";
 import type { ChatIdentity, ChatMessage } from "@/types/chat";
@@ -163,6 +163,151 @@ describe("composer keyboard behavior", () => {
     fireEvent.keyDown(input, { key: "Enter", ...flags });
     expect(onSend).not.toHaveBeenCalled();
     expect(input).toHaveValue("한글");
+  });
+});
+
+describe("emoji picker", () => {
+  const limitNotice = "That emoji doesn’t fit in the remaining message length.";
+
+  function composerInput() {
+    return screen.getByRole("textbox", { name: "Your message" }) as HTMLTextAreaElement;
+  }
+
+  function setComposerText(input: HTMLTextAreaElement, value: string, start: number, end = start) {
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value } });
+    input.setSelectionRange(start, end);
+    fireEvent.select(input);
+  }
+
+  function openAndChoose(name: string) {
+    const trigger = screen.getByRole("button", { name: "Insert emoji" });
+    fireEvent.pointerDown(trigger);
+    fireEvent.mouseDown(trigger);
+    fireEvent.click(trigger);
+    const choice = screen.getByRole("button", { name });
+    const emoji = choice.textContent ?? "";
+    fireEvent.click(choice);
+    return emoji;
+  }
+
+  it("inserts an emoji into an empty draft without sending", async () => {
+    const onSend = vi.fn().mockResolvedValue(true);
+    render(<MessageComposer onSend={onSend} isSending={false} />);
+    const input = composerInput();
+    const emoji = openAndChoose("Grinning face");
+    expect(emoji.length).toBeGreaterThan(0);
+    expect(onSend).not.toHaveBeenCalled();
+    expect(input).toHaveValue(emoji);
+    expect(input).toHaveFocus();
+    expect(input.selectionStart).toBe(emoji.length);
+    expect(input.selectionEnd).toBe(emoji.length);
+    expect(screen.getByRole("button", { name: "Send message" })).toBeEnabled();
+    await act(async () => { fireEvent.keyDown(input, { key: "Enter" }); });
+    expect(onSend).toHaveBeenCalledWith(emoji);
+    expect(input).toHaveValue("");
+  });
+
+  it("inserts at the previous caret and replaces a selected range", () => {
+    const onSend = vi.fn().mockResolvedValue(true);
+    render(<MessageComposer onSend={onSend} isSending={false} />);
+    const input = composerInput();
+    setComposerText(input, "Hello world", 5);
+    let emoji = openAndChoose("Grinning face");
+    expect(input).toHaveValue(`Hello${emoji} world`);
+    expect(input).toHaveFocus();
+    expect(input.selectionStart).toBe(5 + emoji.length);
+    expect(input.selectionEnd).toBe(5 + emoji.length);
+    expect(onSend).not.toHaveBeenCalled();
+
+    setComposerText(input, "Hello world", 6, 11);
+    emoji = openAndChoose("Thumbs up");
+    expect(input).toHaveValue(`Hello ${emoji}`);
+    expect(input.selectionStart).toBe(`Hello ${emoji}`.length);
+    expect(input.selectionEnd).toBe(`Hello ${emoji}`.length);
+  });
+
+  it("rejects an emoji that would exceed the limit and accepts one that fits exactly", () => {
+    const onSend = vi.fn().mockResolvedValue(true);
+    render(<MessageComposer onSend={onSend} isSending={false} />);
+    const input = composerInput();
+    const trigger = screen.getByRole("button", { name: "Insert emoji" });
+    fireEvent.click(trigger);
+    const emoji = screen.getByRole("button", { name: "Grinning face" }).textContent ?? "";
+    fireEvent.keyDown(document, { key: "Escape" });
+    const full = "a".repeat(MAX_MESSAGE_LENGTH);
+    setComposerText(input, full, full.length);
+    openAndChoose("Grinning face");
+    expect(input).toHaveValue(full);
+    expect(input.selectionStart).toBe(full.length);
+    expect(input.selectionEnd).toBe(full.length);
+    expect(screen.getByRole("status")).toHaveTextContent(limitNotice);
+    expect(onSend).not.toHaveBeenCalled();
+
+    const fitting = "b".repeat(MAX_MESSAGE_LENGTH - emoji.length);
+    setComposerText(input, fitting, fitting.length);
+    openAndChoose("Grinning face");
+    expect(input).toHaveValue(fitting + emoji);
+    expect(input.selectionStart).toBe(MAX_MESSAGE_LENGTH);
+    expect(input.selectionEnd).toBe(MAX_MESSAGE_LENGTH);
+    expect(screen.getByRole("status")).not.toHaveTextContent(limitNotice);
+  });
+
+  it("dismisses with Escape, names every choice, and closes outside clicks without moving focus", () => {
+    render(<MessageComposer onSend={vi.fn()} isSending={false} />);
+    const input = composerInput();
+    const trigger = screen.getByRole("button", { name: "Insert emoji" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveAttribute("type", "button");
+    fireEvent.click(trigger);
+    const dialog = screen.getByRole("dialog", { name: "Choose an emoji" });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveAttribute("aria-controls", dialog.id);
+    const choices = within(dialog).getAllByRole("button");
+    expect(choices.length).toBeGreaterThanOrEqual(12);
+    for (const choice of choices) {
+      expect(choice).toHaveAttribute("type", "button");
+      expect(choice).toHaveAccessibleName(/.+/);
+      expect(choice).not.toHaveAttribute("tabindex", "-1");
+    }
+    expect(screen.getByRole("button", { name: "Grinning face" })).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog", { name: "Choose an emoji" })).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+
+    fireEvent.click(trigger);
+    expect(screen.getByRole("dialog", { name: "Choose an emoji" })).toBeInTheDocument();
+    fireEvent.pointerDown(input);
+    input.focus();
+    expect(screen.queryByRole("dialog", { name: "Choose an emoji" })).not.toBeInTheDocument();
+    expect(input).toHaveFocus();
+    expect(trigger).not.toHaveFocus();
+  });
+
+  it("does not edit the draft while sending or during IME composition", () => {
+    const onSend = vi.fn().mockResolvedValue(true);
+    const { rerender } = render(<MessageComposer onSend={onSend} isSending={false} />);
+    const input = composerInput();
+    setComposerText(input, "Hello", 5);
+    fireEvent.click(screen.getByRole("button", { name: "Insert emoji" }));
+    expect(screen.getByRole("dialog", { name: "Choose an emoji" })).toBeInTheDocument();
+    rerender(<MessageComposer onSend={onSend} isSending />);
+    expect(screen.queryByRole("dialog", { name: "Choose an emoji" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Insert emoji" })).toBeDisabled();
+    expect(input).toHaveValue("Hello");
+
+    rerender(<MessageComposer onSend={onSend} isSending={false} />);
+    setComposerText(input, "안녕", 2);
+    fireEvent.click(screen.getByRole("button", { name: "Insert emoji" }));
+    expect(screen.getByRole("dialog", { name: "Choose an emoji" })).toBeInTheDocument();
+    fireEvent.compositionStart(input);
+    expect(screen.getByRole("button", { name: "Insert emoji" })).toBeDisabled();
+    expect(screen.queryByRole("dialog", { name: "Choose an emoji" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Insert emoji" }));
+    expect(input).toHaveValue("안녕");
+    expect(onSend).not.toHaveBeenCalled();
+    fireEvent.compositionEnd(input);
+    expect(screen.getByRole("button", { name: "Insert emoji" })).toBeEnabled();
   });
 });
 
