@@ -176,8 +176,16 @@ svg { flex-shrink: 0; }
 .composer-tools { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .emoji-button { display: grid; place-items: center; width: 27px; height: 27px; border: none; padding: 0; background: transparent; color: #a9a0b6; }
 .emoji-button:disabled { opacity: .7; }
+.emoji-button:not(:disabled) { cursor: pointer; }
+.emoji-button[aria-expanded="true"] { color: #6b50c5; }
+.emoji-button:focus-visible, .emoji-option:focus-visible { outline: 2px solid #6b50c5; outline-offset: 2px; }
+.emoji-picker { position: relative; display: flex; }
+.emoji-panel { position: absolute; bottom: calc(100% + 10px); left: -6px; z-index: 10; display: grid; grid-template-columns: repeat(4, 40px); gap: 4px; padding: 8px; border: 1px solid #e2dfe9; border-radius: 10px; background: #ffffff; box-shadow: 0 6px 18px #3c285524; }
+.emoji-panel[hidden] { display: none; }
+.emoji-option { display: grid; place-items: center; width: 40px; height: 40px; border: none; border-radius: 8px; padding: 0; background: transparent; font-size: 20px; line-height: 1; }
+.emoji-option:hover { background: #f1edf9; }
 .composer-tools-hint { font-size: 9px; color: #b1aaba; }
-.send-button { display: flex; align-items: center; justify-content: center; gap: 11px; border: 1px solid #6b50c5; border-radius: 6px; padding: 8px 13px; background: #7658cc; color: white; font-size: 11px; font-weight: 550; transition: background .15s; }
+.composer-notice { min-height: 1em; margin: 6px 0 0; font-size: 10px; color: #8a2b3b; }.send-button { display: flex; align-items: center; justify-content: center; gap: 11px; border: 1px solid #6b50c5; border-radius: 6px; padding: 8px 13px; background: #7658cc; color: white; font-size: 11px; font-weight: 550; transition: background .15s; }
 .send-button:hover:not(:disabled) { background: #6343b8; }
 .send-button:disabled { background: #a99acb; border-color: #a99acb; }
 .composer-caption { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 3px 0; font-size: 8px; color: #aaa2b4; }
