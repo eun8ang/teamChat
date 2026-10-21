@@ -1,3 +1,4 @@
+import { CopyMessageButton } from "@/components/chat/CopyMessageButton";
 import { formatTime } from "@/lib/time";
 import type { ChatMessage } from "@/types/chat";
 
@@ -19,6 +20,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
           <time dateTime={message.createdAt} title="Time in UTC">{formatTime(message.createdAt)}</time>
         </div>
         <p className="message-bubble">{message.content}</p>
+        <CopyMessageButton content={message.content} authorName={message.displayName} />
       </article>
     </li>
   );
