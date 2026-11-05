@@ -87,3 +87,28 @@ describe("shared chat store", () => {
     expect(args.slice(-5)).toEqual([10_000, 5, 100, 500, 86_400]);
   });
 });
+
+it("round trips attachment metadata while preserving legacy text entries", async () => {
+  const attachment = { id: "a".repeat(32), alt: "Workshop image", expiresAt: 1800000000000 };
+  const entry = streamEntry("101-0", "caption");
+  (entry[1] as string[]).push("attachment", JSON.stringify(attachment));
+  command.mockResolvedValueOnce([entry, streamEntry("100-0", "legacy")]);
+  const page = await readChatMessages();
+  expect(page.messages[0]).not.toHaveProperty("attachment");
+  expect(page.messages[1].attachment).toEqual(attachment);
+  expect(JSON.stringify(page)).not.toContain("base64");
+});
+
+it("includes attachment ID and description in fingerprints and passes only metadata", async () => {
+  const attachment = { id: "a".repeat(32), alt: "Workshop image" };
+  command.mockResolvedValue(["conflict"]);
+  for (const next of [attachment, { ...attachment, alt: "Changed" }, { ...attachment, id: "b".repeat(32) }]) {
+    await expect(appendChatMessage({ ...input, attachment: next })).rejects.toBeInstanceOf(MessageConflictError);
+  }
+  const calls = command.mock.calls.slice(-3).map(([args]) => args);
+  expect(calls.every((args) => args[2] === 5)).toBe(true);
+  expect(new Set(calls.map((args) => args[12])).size).toBe(3);
+  expect(calls[0].slice(-2)).toEqual([attachment.id, attachment.alt]);
+  command.mockResolvedValueOnce(["invalid_attachment"]);
+  await expect(appendChatMessage({ ...input, attachment })).rejects.toThrow("unavailable, expired");
+});

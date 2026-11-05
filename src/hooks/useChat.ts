@@ -1,9 +1,11 @@
 "use client";
 
+import { parseAttachment, isImageMimeType, MAX_IMAGE_BYTES } from "@/lib/media";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MAX_CLIENT_MESSAGES, MESSAGE_POLL_INTERVAL_MS, MESSAGE_REQUEST_TIMEOUT_MS } from "@/config/chat";
 import { isValidMessage, normalizeMessage } from "@/lib/message";
-import type { ChatIdentity, ChatMessage, ConnectionStatus, MessagesResponse, SendMessageResponse } from "@/types/chat";
+import type { ChatIdentity, ChatMessage, ImageDraft, ConnectionStatus, MessagesResponse, SendMessageResponse } from "@/types/chat";
 
 function compareCursors(left: string, right: string): number {
   const [leftTime, leftSequence] = left.split("-").map(BigInt);
@@ -36,6 +38,7 @@ export function useChat(identity: ChatIdentity | null) {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("connecting");
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [retryToken, setRetryToken] = useState(0);
   const cursor = useRef<string | null>(null);
@@ -43,7 +46,7 @@ export function useChat(identity: ChatIdentity | null) {
   const mounted = useRef(true);
   const postController = useRef<AbortController | null>(null);
   const postTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pendingSubmission = useRef<{ content: string; clientId: string; messageId: string } | null>(null);
+  const pendingSubmission = useRef<{ content: string; clientId: string; displayName: string; messageId: string; file?: File; alt?: string; upload?: { id: string; expiresAt: number } } | null>(null);
 
   useEffect(() => {
     mounted.current = true;
@@ -101,12 +104,15 @@ export function useChat(identity: ChatIdentity | null) {
     };
   }, [retryToken]);
 
-  const sendMessage = useCallback(async (content: string): Promise<boolean> => {
+  const sendMessage = useCallback(async (content: string, image?: ImageDraft): Promise<boolean> => {
     if (!identity || !isValidMessage(content) || sending.current) return false;
     const normalized = normalizeMessage(content);
+    const alt = image?.alt.trim();
+    if (image && (!alt || alt.length > 160 || /[\u0000-\u001f\u007f]/.test(alt) || !isImageMimeType(image.file.type) || !image.file.size || image.file.size > MAX_IMAGE_BYTES)) return false;
     const pending = pendingSubmission.current;
-    const messageId = pending?.content === normalized && pending.clientId === identity.clientId ? pending.messageId : crypto.randomUUID();
-    pendingSubmission.current = { content: normalized, clientId: identity.clientId, messageId };
+    const submission = pending?.content === normalized && pending.clientId === identity.clientId && pending.displayName === identity.displayName && pending.file === image?.file && pending.alt === alt
+      ? pending : { content: normalized, clientId: identity.clientId, displayName: identity.displayName, messageId: crypto.randomUUID(), file: image?.file, alt, upload: undefined as { id: string; expiresAt: number } | undefined };
+    pendingSubmission.current = submission;
     sending.current = true;
     setIsSending(true);
     setSendError(null);
@@ -116,10 +122,25 @@ export function useChat(identity: ChatIdentity | null) {
     postTimeout.current = setTimeout(() => { timedOut = true; controller.abort(); }, MESSAGE_REQUEST_TIMEOUT_MS);
 
     try {
+      if (image && !submission.upload) {
+        setIsUploading(true);
+        const form = new FormData();
+        form.set("file", image.file);
+        form.set("clientId", identity.clientId);
+        const uploadResponse = await fetch("/api/media", { method: "POST", body: form, signal: controller.signal });
+        if (!uploadResponse.ok) throw new Error(await responseError(uploadResponse));
+        const upload = await uploadResponse.json();
+        if (!parseAttachment({ id: upload.id, alt }) || !Number.isSafeInteger(upload.expiresAt)) throw new Error("The image upload returned an invalid response.");
+        submission.upload = { id: upload.id, expiresAt: upload.expiresAt };
+        if (mounted.current) setIsUploading(false);
+        // Give the message request its own timeout after a successful upload.
+        if (postTimeout.current !== null) clearTimeout(postTimeout.current);
+        postTimeout.current = setTimeout(() => { timedOut = true; controller.abort(); }, MESSAGE_REQUEST_TIMEOUT_MS);
+      }
       const response = await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...identity, content: normalized, clientMessageId: messageId }),
+        body: JSON.stringify({ ...identity, content: normalized, clientMessageId: submission.messageId, ...(submission.upload ? { attachment: { id: submission.upload.id, alt } } : {}) }),
         signal: controller.signal,
       });
       if (!response.ok) throw new Error(await responseError(response));
@@ -138,10 +159,10 @@ export function useChat(identity: ChatIdentity | null) {
       sending.current = false;
       if (postTimeout.current !== null) clearTimeout(postTimeout.current);
       postTimeout.current = null;
-      if (mounted.current) setIsSending(false);
+      if (mounted.current) { setIsSending(false); setIsUploading(false); }
     }
   }, [identity]);
 
   const retry = useCallback(() => { setRetryToken((current) => current + 1); }, []);
-  return { messages, connectionStatus, isSending, error: sendError ?? connectionError, sendMessage, retry };
+  return { messages, connectionStatus, isSending, isUploading, error: sendError ?? connectionError, sendMessage, retry };
 }
