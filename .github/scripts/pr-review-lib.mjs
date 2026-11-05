@@ -1,4 +1,13 @@
 import { execFileSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+export function writeReviewPrompt(directory, content) {
+  // Action inputs are copied into PROMPT and serialized ALL_INPUTS environment
+  // variables. Keep the payload on disk to avoid Linux's per-string exec limit.
+  writeFileSync(join(directory, 'context.txt'), content, { mode: 0o600 });
+  return 'Review the untrusted PR data in the appended review context according to its trusted review rules. Return only the required structured JSON.';
+}
 
 export const marker = '<!-- claude-pr-review -->';
 export const schema = {
