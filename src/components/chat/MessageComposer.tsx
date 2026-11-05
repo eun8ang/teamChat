@@ -1,13 +1,17 @@
 "use client";
 
+import { ImageAttachmentPicker } from "@/components/chat/ImageAttachmentPicker";
+import type { ImageDraft } from "@/types/chat";
+
 import { useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { EmojiPicker } from "@/components/chat/EmojiPicker";
 import { MAX_MESSAGE_LENGTH } from "@/config/chat";
 import { isValidMessage } from "@/lib/message";
 
 interface MessageComposerProps {
-  onSend: (content: string) => Promise<boolean>;
+  onSend: (content: string, image?: ImageDraft) => Promise<boolean>;
   isSending: boolean;
+  isUploading?: boolean;
 }
 
 interface Selection {
@@ -23,7 +27,8 @@ function isSplitSurrogatePair(text: string, index: number): boolean {
   return before >= 0xd800 && before <= 0xdbff && after >= 0xdc00 && after <= 0xdfff;
 }
 
-export function MessageComposer({ onSend, isSending }: MessageComposerProps) {
+export function MessageComposer({ onSend, isSending, isUploading }: MessageComposerProps) {
+  const [image, setImage] = useState<ImageDraft | null>(null);
   const [draft, setDraft] = useState("");
   const [emojiNotice, setEmojiNotice] = useState("");
   const isComposing = useRef(false);
@@ -76,10 +81,11 @@ export function MessageComposer({ onSend, isSending }: MessageComposerProps) {
   }
 
   async function submit() {
-    if (isComposing.current || isSending || submissionInProgress.current || !isValidMessage(draft)) return;
+    if (isComposing.current || isSending || submissionInProgress.current || !isValidMessage(draft) || (image && !image.alt.trim())) return;
     submissionInProgress.current = true;
     try {
-      if (await onSend(draft)) {
+      if (await (image ? onSend(draft, image) : onSend(draft))) {
+        setImage(null);
         setDraft("");
         input.current?.focus();
       }
@@ -125,12 +131,13 @@ export function MessageComposer({ onSend, isSending }: MessageComposerProps) {
           readOnly={isSending}
           aria-describedby="composer-help message-length emoji-notice"
         />
+        <ImageAttachmentPicker value={image} onChange={setImage} disabled={isSending} isUploading={isUploading} />
         <div className="composer-actions">
           <div className="composer-tools">
             <EmojiPicker disabled={isSending} onSelect={insertEmoji} />
             <span className="composer-tools-hint">A little hello goes a long way.</span>
           </div>
-          <button className="send-button" type="submit" disabled={isSending || !isValidMessage(draft)} aria-label="Send message" aria-busy={isSending}>
+          <button className="send-button" type="submit" disabled={isSending || !isValidMessage(draft) || Boolean(image && !image.alt.trim())} aria-label="Send message" aria-busy={isSending}>
             <span>{isSending ? "Sending…" : "Send"}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

@@ -113,3 +113,13 @@ describe("shared messages API", () => {
     expect((await GET(new Request("https://chat.example.invalid/api/messages"))).status).toBe(503);
   });
 });
+
+it("validates optional attachment metadata and never trusts a browser expiry", async () => {
+  const attachment = { id: "a".repeat(32), alt: "A small workshop drawing" };
+  for (const invalid of [null, {}, { ...attachment, id: "../key" }, { ...attachment, alt: " " }, { ...attachment, alt: "x".repeat(161) }]) {
+    expect((await POST(post({ ...body, attachment: invalid }))).status).toBe(400);
+  }
+  append.mockResolvedValueOnce({ message, cursor: message.id, created: true });
+  expect((await POST(post({ ...body, attachment: { ...attachment, expiresAt: 1 } }))).status).toBe(201);
+  expect(append).toHaveBeenLastCalledWith({ ...body, attachment }, undefined);
+});

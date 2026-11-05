@@ -1,3 +1,5 @@
+import { parseAttachment } from "@/lib/media";
+import { InvalidAttachmentError } from "@/server/media-store";
 import { createHash } from "node:crypto";
 import type { ChatMessage } from "@/types/chat";
 import { redisCommand, RedisUnavailableError } from "@/server/redis";
@@ -11,6 +13,7 @@ const CLIENT_RATE_LIMIT = 5;
 const IP_RATE_LIMIT = 100;
 
 export interface NewChatMessage {
+  attachment?: { id: string; alt: string };
   clientId: string;
   clientMessageId: string;
   displayName: string;
@@ -52,7 +55,15 @@ function parseStoredMessage(value: unknown): ChatMessage {
     typeof message.content !== "string" ||
     typeof message.createdAt !== "string" || Number.isNaN(Date.parse(message.createdAt))
   ) throw new RedisUnavailableError();
+  let attachment;
+  if (message.attachment !== undefined) {
+    const stored = typeof message.attachment === "string" ? JSON.parse(message.attachment) : message.attachment;
+    const parsed = parseAttachment(stored);
+    if (!parsed || !Number.isSafeInteger(stored.expiresAt) || stored.expiresAt <= 0) throw new RedisUnavailableError();
+    attachment = { ...parsed, expiresAt: stored.expiresAt as number };
+  }
   return {
+    ...(attachment ? { attachment } : {}),
     id: message.id,
     clientId: message.clientId,
     displayName: message.displayName,
@@ -98,6 +109,17 @@ if previous then
   return {'duplicate', cjson.encode(record.message)}
 end
 
+local attachment = nil
+if ARGV[12] and ARGV[12] ~= '' then
+  local raw = redis.call('GET', KEYS[5])
+  if not raw then return {'invalid_attachment'} end
+  local media = cjson.decode(raw)
+  local time = redis.call('TIME')
+  local now = tonumber(time[1]) * 1000 + math.floor(tonumber(time[2]) / 1000)
+  if media.clientId ~= ARGV[1] or media.id ~= ARGV[12] or media.expiresAt <= now then return {'invalid_attachment'} end
+  attachment = {id = ARGV[12], alt = ARGV[13], expiresAt = media.expiresAt}
+end
+
 local clientCount = tonumber(redis.call('GET', KEYS[3]) or '0')
 local ipEnabled = ARGV[6] == '1'
 local ipCount = 0
@@ -120,10 +142,15 @@ if ipEnabled then
   if ipCount == 0 then redis.call('PEXPIRE', KEYS[4], ARGV[7]) end
 end
 
-local id = redis.call('XADD', KEYS[1], 'MAXLEN', '=', ARGV[10], '*',
-  'clientId', ARGV[1], 'displayName', ARGV[2], 'content', ARGV[3], 'createdAt', ARGV[4])
+local fields = {'clientId', ARGV[1], 'displayName', ARGV[2], 'content', ARGV[3], 'createdAt', ARGV[4]}
+if attachment then
+  table.insert(fields, 'attachment')
+  table.insert(fields, cjson.encode(attachment))
+end
+local id = redis.call('XADD', KEYS[1], 'MAXLEN', '=', ARGV[10], '*', unpack(fields))
 redis.call('EXPIRE', KEYS[1], ARGV[11])
 local message = {id = id, clientId = ARGV[1], displayName = ARGV[2], content = ARGV[3], createdAt = ARGV[4]}
+if attachment then message.attachment = attachment end
 redis.call('SET', KEYS[2], cjson.encode({fingerprint = ARGV[5], message = message}), 'EX', ARGV[11])
 return {'created', cjson.encode(message)}
 `;
@@ -132,25 +159,29 @@ export async function appendChatMessage(
   input: NewChatMessage,
   ipAddress?: string,
 ): Promise<{ message: ChatMessage; cursor: string; created: boolean }> {
+  if (input.attachment && !parseAttachment(input.attachment)) throw new InvalidAttachmentError();
   const prefix = roomKeyPrefix();
   const ipHash = ipAddress
     ? createHash("sha256").update(`${prefix}|${ipAddress}`).digest("hex").slice(0, 32)
     : "none";
   const fingerprint = createHash("sha256")
-    .update(JSON.stringify({ displayName: input.displayName, content: input.content }))
+    .update(JSON.stringify({ displayName: input.displayName, content: input.content, ...(input.attachment ? { attachment: input.attachment } : {}) }))
     .digest("hex");
   const result = await redisCommand<unknown[]>([
-    "EVAL", APPEND_MESSAGE_SCRIPT, 4,
+    "EVAL", APPEND_MESSAGE_SCRIPT, input.attachment ? 5 : 4,
     `${prefix}:messages`,
     `${prefix}:dedupe:${input.clientId}:${input.clientMessageId}`,
     `${prefix}:rate:client:${input.clientId}`,
     `${prefix}:rate:ip:${ipHash}`,
+    ...(input.attachment ? [`${prefix}:media:${input.attachment.id}`] : []),
     input.clientId, input.displayName, input.content, new Date().toISOString(), fingerprint,
     ipAddress ? "1" : "0", RATE_WINDOW_MS, CLIENT_RATE_LIMIT, IP_RATE_LIMIT,
     MAX_RETAINED_MESSAGES, ROOM_TTL_SECONDS,
+    ...(input.attachment ? [input.attachment.id, input.attachment.alt] : []),
   ]);
 
   if (!Array.isArray(result)) throw new RedisUnavailableError();
+  if (result[0] === "invalid_attachment") throw new InvalidAttachmentError();
   if (result[0] === "conflict") throw new MessageConflictError();
   if (result[0] === "rate_limited") {
     const retryAfter = Number(result[1]);

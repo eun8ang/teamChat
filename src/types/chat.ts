@@ -3,7 +3,16 @@ export interface ChatIdentity {
   displayName: string;
 }
 
+export interface MessageAttachment {
+  id: string;
+  alt: string;
+  expiresAt: number;
+}
+
+export interface ImageDraft { file: File; alt: string }
+
 export interface ChatMessage extends ChatIdentity {
+  attachment?: MessageAttachment;
   id: string;
   content: string;
   createdAt: string;

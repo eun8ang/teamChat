@@ -14,7 +14,7 @@ import { usePresence } from "@/hooks/usePresence";
 
 export default function Home() {
   const { identity, isReady, join } = useIdentity();
-  const { messages, sendMessage, connectionStatus, isSending, error, retry } = useChat(identity);
+  const { messages, sendMessage, connectionStatus, isSending, isUploading, error, retry } = useChat(identity);
   const presence = usePresence(identity);
 
   return (
@@ -50,7 +50,7 @@ export default function Home() {
           <OnlineParticipants presence={presence} currentClientId={identity?.clientId ?? null} />
           <MessageList messages={messages} currentClientId={identity?.clientId ?? null} isLoading={connectionStatus !== "connected" && messages.length === 0} />
           {error && <div className="chat-error" role="alert"><p>{error}</p>{connectionStatus === "reconnecting" && <button type="button" onClick={retry}>Reconnect</button>}</div>}
-          {!isReady ? <p className="identity-loading" role="status">Opening your workshop session…</p> : identity ? <MessageComposer onSend={sendMessage} isSending={isSending} /> : <ParticipantSetup onJoin={join} />}
+          {!isReady ? <p className="identity-loading" role="status">Opening your workshop session…</p> : identity ? <MessageComposer onSend={sendMessage} isSending={isSending} isUploading={isUploading} /> : <ParticipantSetup onJoin={join} />}
           <footer className="chat-footer"><ChatStats messageCount={messages.length} connectionStatus={connectionStatus} /><span className="time-zone-note">Times in UTC</span><BuildInfo /></footer>
         </section>
         <p className="workspace-footnote">One issue. One branch. One step forward.</p>

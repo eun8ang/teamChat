@@ -1,3 +1,5 @@
+import { parseAttachment } from "@/lib/media";
+import { InvalidAttachmentError } from "@/server/media-store";
 import { NextResponse } from "next/server";
 import {
   appendChatMessage,
@@ -34,7 +36,10 @@ function validateMessage(value: unknown): NewChatMessage | null {
   const displayName = parseDisplayName(body.displayName);
   const content = body.content.trim();
   if (!displayName || content.length < 1 || content.length > 1_000) return null;
+  const attachment = body.attachment === undefined ? undefined : parseAttachment(body.attachment);
+  if (attachment === null) return null;
   return {
+    ...(attachment ? { attachment } : {}),
     clientId: body.clientId.toLowerCase(),
     clientMessageId: body.clientMessageId.toLowerCase(),
     displayName,
@@ -79,6 +84,7 @@ export async function POST(request: Request) {
     if (error instanceof ChatRateLimitError) {
       return errorResponse(error.message, 429, { "Retry-After": String(Math.ceil(error.retryAfter)) });
     }
+    if (error instanceof InvalidAttachmentError) return errorResponse(error.message, 400);
     if (error instanceof MessageConflictError) return errorResponse(error.message, 409);
     return errorResponse("Shared chat is temporarily unavailable. Please try again shortly.", 503);
   }
