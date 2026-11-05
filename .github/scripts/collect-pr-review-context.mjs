@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, appendFileSync, mkdirSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import { allowedPath, api, changedLines, comments, eligible, git, ownComment, schema, sensitive } from './pr-review-lib.mjs';
+import { allowedPath, api, changedLines, comments, eligible, git, ownComment, schema, sensitive, writeReviewPrompt } from './pr-review-lib.mjs';
 
 const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
 const pr = event.pull_request;
@@ -65,6 +65,6 @@ mkdirSync('.review', { recursive: true });
 writeFileSync('.review/metadata.json', JSON.stringify({ number: pr.number, base: pr.base.sha, head: pr.head.sha, files, excluded }));
 const instructions = readFileSync('.github/prompts/claude-pr-review.md', 'utf8');
 const rules = ['AGENTS.md', 'CLAUDE.md'].map(p => `${p}:\n${readFileSync(p, 'utf8')}`).join('\n');
-output('prompt', `${instructions}\n\nTrusted base rules:\n${rules}\n\nExcluded scope: ${JSON.stringify(excluded)}\n\nUntrusted review data (JSON per file):\n${context.join('\n')}`);
+output('prompt', writeReviewPrompt('.review', `${instructions}\n\nTrusted base rules:\n${rules}\n\nExcluded scope: ${JSON.stringify(excluded)}\n\nUntrusted review data (JSON per file):\n${context.join('\n')}`));
 output('schema', JSON.stringify(schema));
 output('run', 'true');
