@@ -1,9 +1,32 @@
 import { describe, expect, it, vi } from 'vitest';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 // Workflow helpers run directly in Node without application dependencies.
-import { allowedPath, changedLines, eligible, escapeMarkdown, ownComment, sensitive, validateResult } from '../.github/scripts/pr-review-lib.mjs';
+import { allowedPath, changedLines, eligible, escapeMarkdown, ownComment, sensitive, validateResult, writeReviewPrompt } from '../.github/scripts/pr-review-lib.mjs';
 import { publishReview } from '../.github/scripts/publish-pr-review.mjs';
 
 describe('Claude review boundaries', () => {
+  it('keeps large multilingual context out of Action input environment variables', () => {
+    const directory = mkdtempSync(join(tmpdir(), 'claude-review-'));
+    try {
+      const context = '한글 diff "quoted" \\path\n'.repeat(12000);
+      expect(Buffer.byteLength(context)).toBeGreaterThan(200 * 1024);
+      const prompt = writeReviewPrompt(directory, context);
+      expect(readFileSync(join(directory, 'context.txt'), 'utf8')).toBe(context);
+      // The action copies prompt to both PROMPT and JSON-serialized ALL_INPUTS.
+      expect(Buffer.byteLength(prompt)).toBeLessThan(1024);
+      expect(Buffer.byteLength(JSON.stringify({ prompt }))).toBeLessThan(2048);
+      expect(prompt).not.toContain('한글');
+      const workflow = readFileSync('.github/workflows/claude-pr-review.yml', 'utf8');
+      expect(workflow).toContain('--append-system-prompt-file .review/context.txt');
+      expect(workflow).toContain('--tools=');
+      expect(workflow).toContain('path: .review/*.json');
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   it('excludes unsafe paths and sensitive input', () => {
     for (const path of ['../src/a.ts', 'src/../a.ts', '/src/a.ts', 'src/a\n.ts', '.env.local', 'src/credentials.ts', 'node_modules/a.js']) {
       expect(allowedPath(path)).toBe(false);

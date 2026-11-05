@@ -59,7 +59,9 @@ jobs:
           show_full_output: 'false'
           prompt: ${{ steps.context.outputs.prompt }}
           claude_args: >-
-            --bare --tools "" --strict-mcp-config --mcp-config '{"mcpServers":{}}'
+            --bare --tools= --disallowedTools 'mcp__*'
+            --strict-mcp-config --mcp-config '{"mcpServers":{}}'
+            --append-system-prompt-file .review/context.txt
             --max-turns 10 --max-budget-usd 2
             --model claude-sonnet-4-6
             --json-schema '${{ steps.context.outputs.schema }}'
