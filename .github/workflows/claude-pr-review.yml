@@ -1,0 +1,109 @@
+name: Claude PR Review
+
+"on":
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    if: >-
+      vars.CLAUDE_REVIEW_ENABLED == 'true' &&
+      github.event.pull_request.state == 'open' &&
+      !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.type == 'User' &&
+      !endsWith(github.actor, '[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Configure required human reviewers before enabling this workflow.
+    environment: claude-review
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.context.outputs.run }}
+      outcome: ${{ steps.result.outputs.outcome }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - name: Collect trusted instructions and bounded review data
+        id: context
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/collect-pr-review-context.mjs
+      - name: Analyze without tools or write permissions
+        id: claude
+        if: steps.context.outputs.run == 'true'
+        continue-on-error: true
+        uses: anthropics/claude-code-action@c0949c50a78c1ec8ce2647db36629b870e715d0c
+        with:
+          github_token: ${{ github.token }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          track_progress: 'false'
+          classify_inline_comments: 'false'
+          use_commit_signing: 'false'
+          display_report: 'false'
+          show_full_output: 'false'
+          prompt: ${{ steps.context.outputs.prompt }}
+          claude_args: >-
+            --bare --tools "" --strict-mcp-config --mcp-config '{"mcpServers":{}}'
+            --max-turns 10 --max-budget-usd 2
+            --model claude-sonnet-4-6
+            --json-schema '${{ steps.context.outputs.schema }}'
+      - name: Save only structured result
+        id: result
+        if: always() && steps.context.outputs.run == 'true'
+        env:
+          REVIEW_RESULT: ${{ steps.claude.outputs.structured_output }}
+          ACTION_OUTCOME: ${{ steps.claude.outcome }}
+        run: node .github/scripts/save-pr-review-result.mjs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always() && steps.context.outputs.run == 'true'
+        with:
+          name: claude-review-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .review/*.json
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - name: Mark analysis failure
+        if: always() && steps.context.outputs.run == 'true' && steps.result.outputs.outcome != 'success'
+        run: exit 1
+
+  publish:
+    needs: analyze
+    if: always() && !cancelled() && needs.analyze.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: claude-review-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .review
+      - name: Validate and publish latest review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ANALYSIS_OUTCOME: ${{ needs.analyze.outputs.outcome }}
+        run: node .github/scripts/publish-pr-review.mjs
